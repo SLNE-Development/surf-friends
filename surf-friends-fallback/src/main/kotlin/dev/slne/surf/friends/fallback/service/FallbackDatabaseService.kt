@@ -25,6 +25,7 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -36,8 +37,8 @@ import java.util.UUID
 class FallbackDatabaseService : DatabaseService, Services.Fallback {
     object FriendShips: Table("friend_ships") {
         val id = integer("id").autoIncrement()
-        val userUuid = uuid("user_uuid")
-        val friendUuid = uuid("friend_uuid")
+        val userUuid = varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val friendUuid = varchar("friend_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val created_at = long("created_at")
 
         override val primaryKey = PrimaryKey(id)
@@ -45,15 +46,15 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
 
     object FriendRequests: Table("friend_requests") {
         val id = integer("id").autoIncrement()
-        val senderUuid = uuid("sender_uuid")
-        val receiverUuid = uuid("receiver_uuid")
+        val senderUuid = varchar("sender_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
+        val receiverUuid = varchar("receiver_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() })
         val send_at = long("created_at")
 
         override val primaryKey = PrimaryKey(id)
     }
 
     object FriendSettings: Table("friend_settings") {
-        val userUuid = uuid("user_uuid").uniqueIndex()
+        val userUuid = varchar("user_uuid", 36).transform({ UUID.fromString(it) }, { it.toString() }).uniqueIndex()
         var announcementsEnabled = bool("announcements_enabled").default(true)
         var soundsEnabled = bool("sounds_enabled").default(true)
 
@@ -79,7 +80,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ) : ObjectSet<Friendship> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                FriendShips.select (FriendShips.userUuid eq uuid)
+                FriendShips.selectAll().where (FriendShips.userUuid eq uuid)
                     .map {
                         CoreFriendship (
                             userUuid = it[FriendShips.userUuid],
@@ -99,7 +100,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ): Friendship? {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                FriendShips.select (
+                FriendShips.selectAll().where (
                     (FriendShips.userUuid eq playerA) and (FriendShips.friendUuid eq playerB) or (
                         (FriendShips.userUuid eq playerB) and (FriendShips.friendUuid eq playerA)
                     )
@@ -122,7 +123,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ): FriendRequest? {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                FriendRequests.select (
+                FriendRequests.selectAll().where (
                     (FriendRequests.senderUuid eq sender) and (FriendRequests.receiverUuid eq target)
                 )
                     .map {
@@ -142,7 +143,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ) : ObjectSet<FriendRequest> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                FriendRequests.select (FriendRequests.senderUuid eq uuid)
+                FriendRequests.selectAll().where (FriendRequests.senderUuid eq uuid)
                     .map {
                         CoreFriendRequest(
                             senderUuid = it[FriendRequests.senderUuid],
@@ -160,7 +161,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ) : ObjectSet<FriendRequest> {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                FriendRequests.select (FriendRequests.receiverUuid eq uuid)
+                FriendRequests.selectAll().where (FriendRequests.receiverUuid eq uuid)
                     .map {
                         CoreFriendRequest(
                             senderUuid = it[FriendRequests.senderUuid],
@@ -178,7 +179,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ) : CoreFriendSettingsPair {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                FriendSettings.select (FriendSettings.userUuid eq uuid)
+                FriendSettings.selectAll().where (FriendSettings.userUuid eq uuid)
                     .map { it.toFriendSettings() }
                     .firstOrNull() ?: CoreFriendSettingsPair()
             }
@@ -265,7 +266,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     ) : CoreFriendSettingsPair {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
-                if(FriendSettings.select(FriendSettings.userUuid eq uuid).firstOrNull() == null) {
+                if(FriendSettings.selectAll().where(FriendSettings.userUuid eq uuid).firstOrNull() == null) {
                     FriendSettings.insert {
                         it[FriendSettings.userUuid] = uuid
                         it[FriendSettings.announcementsEnabled] = pair.announcementsEnabled
