@@ -11,7 +11,7 @@ interface SurfFriendsApi {
      *
      * @param uuid The UUID of the first user.
      * @param friend The UUID of the friend.
-     * @return The created FriendShip object.
+     * @return The created Friendship object.
      */
     suspend fun createFriendship(uuid: UUID, friend: UUID): Friendship
 
