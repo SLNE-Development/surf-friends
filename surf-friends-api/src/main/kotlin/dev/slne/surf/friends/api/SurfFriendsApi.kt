@@ -27,7 +27,7 @@ interface SurfFriendsApi {
      * Retrieves all friendships of a user.
      *
      * @param uuid The UUID of the user.
-     * @return A set of FriendShips representing the user's friends.
+     * @return A set of Friendships representing the user's friends.
      */
     suspend fun getFriendships(uuid: UUID): ObjectSet<Friendship>
 
