@@ -5,8 +5,8 @@ import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.plugin.Dependency
 
-import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.slne.surf.friends.core.service.databaseService
@@ -15,7 +15,6 @@ import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendListComman
 import dev.slne.surf.friends.velocity.command.subcommand.request.FriendRequestSendCommand
 import dev.slne.surf.friends.velocity.listener.ConnectionListener
 
-import org.slf4j.Logger
 import java.nio.file.Path
 import kotlin.jvm.optionals.getOrNull
 
