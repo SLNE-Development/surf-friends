@@ -24,7 +24,6 @@ fun formatTime(millis: Long): String {
     return timeFormatter.format(Instant.ofEpochMilli(millis))
 }
 
-
 fun UUID.sendText(builder: SurfComponentBuilder.() -> Unit) {
     val optionalPlayer = plugin.proxy.getPlayer(this) ?: return
     val player = optionalPlayer.get()
