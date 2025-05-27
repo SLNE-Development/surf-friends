@@ -62,8 +62,6 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     }
 
     override fun connect(path: Path) {
-        println(path)
-
         DatabaseProvider(path, path).connect()
 
         transaction {
