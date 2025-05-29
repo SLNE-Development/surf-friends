@@ -214,9 +214,11 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
         withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 FriendShips.deleteWhere {
-                    (FriendShips.userUuid eq uuid) and (FriendShips.friendUuid eq friend) or (
-                        (FriendShips.userUuid eq friend) and (FriendShips.friendUuid eq uuid)
-                    )
+                    (FriendShips.userUuid eq uuid) and (FriendShips.friendUuid eq friend)
+                }
+
+                FriendShips.deleteWhere {
+                    (FriendShips.userUuid eq friend) and (FriendShips.friendUuid eq uuid)
                 }
             }
         }
