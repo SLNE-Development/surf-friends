@@ -38,10 +38,10 @@ class ConnectionListener {
                     }
                 }
 
-                val playerSettings = databaseService.getFriendSettings(player.uniqueId)
+                onlineFriends.forEach {
+                    val playerSettings = databaseService.getFriendSettings(it)
 
-                if(playerSettings.announcementsEnabled) {
-                    onlineFriends.forEach {
+                    if(playerSettings.announcementsEnabled) {
                         it.sendText {
                             variableValue(player.username)
                             info(" ist nun online.")
@@ -73,18 +73,16 @@ class ConnectionListener {
         val player = event.player
 
         container.launch {
-            val playerSettings = databaseService.getFriendSettings(player.uniqueId)
-
-            if(!playerSettings.announcementsEnabled) {
-                return@launch
-            }
-
             val onlineFriends = friendService.getOnlineFriends(player.uniqueId)
 
             onlineFriends.forEach {
-                it.sendText {
-                    variableValue(player.username)
-                    info(" ist nun offline.")
+                val playerSettings = databaseService.getFriendSettings(it)
+
+                if(playerSettings.announcementsEnabled) {
+                    it.sendText {
+                        variableValue(player.username)
+                        info(" ist nun offline.")
+                    }
                 }
             }
         }
