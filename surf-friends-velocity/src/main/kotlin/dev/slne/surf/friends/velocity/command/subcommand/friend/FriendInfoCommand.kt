@@ -31,6 +31,13 @@ class FriendInfoCommand(commandName: String) : CommandAPICommand(commandName) {
 
                 val friendShip = friendService.getFriendship(player.uniqueId, targetUuid)
 
+                if(targetUuid == player.uniqueId) {
+                    player.uniqueId.sendText {
+                        error("Du kannst keine Informationen über dich selbst abrufen.")
+                    }
+                    return@launch
+                }
+
                 if (friendShip == null) {
                     player.uniqueId.sendText {
                         error("Du bist nicht mit $target befreundet.")
