@@ -4,9 +4,9 @@ import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.jorel.commandapi.kotlindsl.stringArgument
 
 import dev.slne.surf.friends.core.service.friendService
+import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
 import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
@@ -14,7 +14,7 @@ import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
 class FriendRemoveCommand(commandName: String): CommandAPICommand(commandName) {
     init {
-        stringArgument("target")
+        playerStringArgument("target")
         withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REMOVE)
         playerExecutor { player, args ->
             container.launch {
