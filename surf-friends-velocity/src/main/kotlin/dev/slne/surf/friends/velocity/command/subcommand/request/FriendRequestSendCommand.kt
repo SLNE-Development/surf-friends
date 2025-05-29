@@ -29,6 +29,13 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
                     }
                 }
 
+                if(player.uniqueId == targetUuid) {
+                    player.uniqueId.sendText {
+                        error("Du kannst dir keine Freundschaftsanfrage selbst senden.")
+                    }
+                    return@launch
+                }
+
                 val friendShip = friendService.getFriendship(player.uniqueId, targetUuid)
 
                 if(friendShip != null) {
