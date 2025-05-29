@@ -57,7 +57,13 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
 
                 if(receivedFriendRequest != null) {
                     player.uniqueId.sendText {
-                        error("Du hast bereits eine Freundschaftsanfrage von $target erhalten.")
+                        error("Du hast bereits eine Freundschaftsanfrage von $target erhalten. Möchtest du diese annehmen?")
+                        append {
+                            clickRunsCommand("/friend accept $target")
+                            spacer(" [")
+                            info("Akzeptieren".toSmallCaps())
+                            spacer("]")
+                        }
                     }
                     return@launch
                 }
