@@ -5,6 +5,7 @@ import dev.slne.surf.friends.api.model.FriendRequest
 import dev.slne.surf.friends.api.model.Friendship
 import dev.slne.surf.friends.core.service.FriendService
 import dev.slne.surf.friends.core.service.databaseService
+import dev.slne.surf.friends.core.service.friendService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
 import java.util.UUID
@@ -23,12 +24,14 @@ class FallbackFriendService : FriendService, Services.Fallback {
 
     override suspend fun removeFriendship(uuid: UUID, friend: UUID) {
         val friendShip = databaseService.getFriendship(uuid, friend)
+        val targetFriendShip = databaseService.getFriendship(friend, uuid)
 
-        if(friendShip == null) {
+        if(friendShip == null || targetFriendShip == null) {
             return
         }
 
         databaseService.removeFriendship(uuid, friend)
+        databaseService.removeFriendship(friend, uuid)
     }
 
     override suspend fun getFriendship(
@@ -68,6 +71,7 @@ class FallbackFriendService : FriendService, Services.Fallback {
 
         databaseService.removeFriendRequest(sender, receiver)
         databaseService.addFriendship(sender, receiver)
+        databaseService.addFriendship(receiver, sender)
     }
 
     override suspend fun declineFriendRequest(sender: UUID, receiver: UUID) {

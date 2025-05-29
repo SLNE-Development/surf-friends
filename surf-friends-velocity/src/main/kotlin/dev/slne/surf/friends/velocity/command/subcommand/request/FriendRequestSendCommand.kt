@@ -6,11 +6,14 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.stringArgument
+import dev.slne.surf.friends.core.service.databaseService
 
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
+import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
 class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandName) {
@@ -50,14 +53,34 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
                     success("Du hast eine Freundschaftsanfrage an ")
                     variableValue(target)
                     success(" gesendet.")
-                    //TODO: Add revoke button
+                    append {
+                        clickRunsCommand("/friend revoke $target")
+                        spacer(" [")
+                        info("Zurückziehen".toSmallCaps())
+                        spacer("]")
+                    }
                 }
 
-                targetUuid.sendText {
-                    info("Du hast eine Freundschaftsanfrage von ")
-                    variableValue(player.username)
-                    info(" erhalten.")
-                    //TODO: Add accept and decline buttons
+                val targetSettings = databaseService.getFriendSettings(targetUuid)
+
+                if(targetSettings.announcementsEnabled) {
+                    targetUuid.sendText {
+                        info("Du hast eine Freundschaftsanfrage von ")
+                        variableValue(player.username)
+                        info(" erhalten.")
+                        append {
+                            clickRunsCommand("/friend accept ${player.username}")
+                            spacer(" [")
+                            info("Akzeptieren".toSmallCaps())
+                            spacer("]")
+                        }
+                        append {
+                            clickRunsCommand("/friend decline ${player.username}")
+                            spacer(" [")
+                            info("Ablehnen".toSmallCaps())
+                            spacer("]")
+                        }
+                    }
                 }
             }
         }
