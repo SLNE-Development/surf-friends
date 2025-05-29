@@ -2,6 +2,7 @@ package dev.slne.surf.friends.velocity.command
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendJumpCommand
 import dev.slne.surf.friends.velocity.command.subcommand.request.FriendRequestSendCommand
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendListCommand
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendRemoveCommand
@@ -25,6 +26,7 @@ class FriendCommand(commandName: String): CommandAPICommand(commandName) {
         subcommand(FriendRequestDeclineCommand("decline"))
         subcommand(FriendRequestRevokeCommand("revoke"))
         subcommand(FriendRequestListCommand("requests"))
+        subcommand(FriendJumpCommand("jump"))
 
         subcommand(FriendToggleCommand("toggle"))
     }

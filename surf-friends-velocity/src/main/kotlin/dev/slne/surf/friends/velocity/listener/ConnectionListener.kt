@@ -44,7 +44,7 @@ class ConnectionListener {
                     info(" Freundschaftsanfragen offen. ")
 
                     append {
-                        clickRunsCommand("/friend request list")
+                        clickRunsCommand("/friend requests")
                         info("[Ansehen]".toSmallCaps())
                         hoverEvent(buildText {
                             info("Klicke hier, um die Freundschaftsanfragen anzusehen.")
