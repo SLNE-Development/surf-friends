@@ -2,7 +2,9 @@ package dev.slne.surf.friends.velocity.listener
 
 import com.github.shynixn.mccoroutine.velocity.launch
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
+import dev.slne.surf.friends.core.service.databaseService
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.plugin
@@ -35,6 +37,17 @@ class ConnectionListener {
                         })
                     }
                 }
+
+                val playerSettings = databaseService.getFriendSettings(player.uniqueId)
+
+                if(playerSettings.announcementsEnabled) {
+                    onlineFriends.forEach {
+                        it.sendText {
+                            variableValue(player.username)
+                            info(" ist nun online.")
+                        }
+                    }
+                }
             }
 
             if(friendRequests.isNotEmpty()) {
@@ -50,6 +63,28 @@ class ConnectionListener {
                             info("Klicke hier, um die Freundschaftsanfragen anzusehen.")
                         })
                     }
+                }
+            }
+        }
+    }
+
+    @Subscribe
+    fun onDisconnect(event: DisconnectEvent) {
+        val player = event.player
+
+        container.launch {
+            val playerSettings = databaseService.getFriendSettings(player.uniqueId)
+
+            if(!playerSettings.announcementsEnabled) {
+                return@launch
+            }
+
+            val onlineFriends = friendService.getOnlineFriends(player.uniqueId)
+
+            onlineFriends.forEach {
+                it.sendText {
+                    variableValue(player.username)
+                    info(" ist nun offline.")
                 }
             }
         }
