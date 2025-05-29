@@ -9,6 +9,7 @@ object FriendPermissionRegistry {
     const val COMMAND_FRIEND_REQUEST_REVOKE = "surf.friends.command.request.revoke"
     const val COMMAND_FRIEND_REQUEST_LIST = "surf.friends.command.request.list"
 
+    const val COMMAND_FRIEND_INFO = "surf.friends.command.info"
     const val COMMAND_FRIEND_JUMP = "surf.friends.command.jump"
     const val COMMAND_FRIEND_REMOVE = "surf.friends.command.remove"
     const val COMMAND_FRIEND_LIST = "surf.friends.command.list"
