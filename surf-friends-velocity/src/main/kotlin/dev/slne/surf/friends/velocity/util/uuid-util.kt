@@ -11,6 +11,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
 val timeFormatter: DateTimeFormatter = DateTimeFormatter
     .ofPattern("dd.MM.yyyy, HH:mm:ss", Locale.GERMANY)
@@ -25,8 +26,7 @@ fun formatTime(millis: Long): String {
 }
 
 fun UUID.sendText(builder: SurfComponentBuilder.() -> Unit) {
-    val optionalPlayer = plugin.proxy.getPlayer(this) ?: return
-    val player = optionalPlayer.get()
+    val player = plugin.proxy.getPlayer(this).getOrNull() ?: return
 
     player.sendMessage(Colors.PREFIX.append(SurfComponentBuilder(builder)))
 }
@@ -36,5 +36,5 @@ suspend fun UUID.getUsername(): String {
 }
 
 fun UUID.toPlayer(): Player? {
-    return plugin.proxy.getPlayer(this).orElse(null)
+    return plugin.proxy.getPlayer(this).getOrNull()
 }
