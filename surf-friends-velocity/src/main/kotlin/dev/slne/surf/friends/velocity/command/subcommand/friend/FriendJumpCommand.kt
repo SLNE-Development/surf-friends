@@ -49,12 +49,17 @@ class FriendJumpCommand(commandName: String): CommandAPICommand(commandName) {
                             error("Der Spieler $target ist nicht auf einem Server.")
                         }
                     }).fireAndForget()
+
+                    player.uniqueId.sendText {
+                        success("Du bist ")
+                        variableValue(target)
+                        success(" auf den Server gefolgt.")
+                    }
+                    return@launch
                 }
 
                 player.uniqueId.sendText {
-                    success("Du bist ")
-                    variableValue(target)
-                    success(" auf den Server gefolgt.")
+                    error("Der Spieler $target ist nicht online.")
                 }
             }
         }

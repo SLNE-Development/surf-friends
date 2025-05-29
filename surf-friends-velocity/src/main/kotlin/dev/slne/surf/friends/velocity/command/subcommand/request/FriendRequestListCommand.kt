@@ -9,7 +9,7 @@ import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.PageableMessageBuilder
 import dev.slne.surf.friends.velocity.util.format
-import dev.slne.surf.friends.velocity.util.getUsername
+import dev.slne.surf.friends.velocity.util.getUsernameAsync
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -37,7 +37,7 @@ class FriendRequestListCommand(commandName: String): CommandAPICommand(commandNa
 
                 val senderNames = friendRequests.map {
                     async {
-                        it to it.senderUuid.getUsername()
+                        it to it.senderUuid.getUsernameAsync()
                     }
                 }.awaitAll()
 

@@ -31,8 +31,12 @@ fun UUID.sendText(builder: SurfComponentBuilder.() -> Unit) {
     player.sendMessage(Colors.PREFIX.append(SurfComponentBuilder(builder)))
 }
 
-suspend fun UUID.getUsername(): String {
+suspend fun UUID.getUsernameAsync(): String {
     return PlayerLookupService.getUsername(this) ?: "Unknown"
+}
+
+fun UUID.getUsername(): String {
+    return plugin.proxy.getPlayer(this).getOrNull()?.username ?: "Unknown"
 }
 
 fun UUID.toPlayer(): Player? {

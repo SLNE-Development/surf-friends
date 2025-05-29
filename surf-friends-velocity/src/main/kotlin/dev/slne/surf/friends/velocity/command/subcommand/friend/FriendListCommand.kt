@@ -8,7 +8,7 @@ import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.PageableMessageBuilder
-import dev.slne.surf.friends.velocity.util.getUsername
+import dev.slne.surf.friends.velocity.util.getUsernameAsync
 import dev.slne.surf.friends.velocity.util.isOnline
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.friends.velocity.util.toPlayer
@@ -41,7 +41,7 @@ class FriendListCommand(commandName: String): CommandAPICommand(commandName) {
                     it.friendUuid.isOnline()
                 }.map {
                     async {
-                        it to it.friendUuid.getUsername()
+                        it to it.friendUuid.getUsernameAsync()
                     }
                 }.awaitAll()
 
@@ -76,7 +76,7 @@ class FriendListCommand(commandName: String): CommandAPICommand(commandName) {
                                 variableValue(it.second)
                                 info(" hinterher zuspringen.")
                             })
-                            clickRunsCommand("/friend jump ${it.first.friendUuid}")
+                            clickRunsCommand("/friend jump ${it.second}")
                         }
                     }
                 }.send(player, page)
