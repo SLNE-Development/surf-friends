@@ -46,10 +46,18 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
                 }
 
                 val friendRequest = friendService.getFriendRequest(player.uniqueId, targetUuid)
+                val receivedFriendRequest = friendService.getFriendship(targetUuid, player.uniqueId)
 
                 if(friendRequest != null) {
                     player.uniqueId.sendText {
                         error("Du hast bereits eine Freundschaftsanfrage an $target gesendet.")
+                    }
+                    return@launch
+                }
+
+                if(receivedFriendRequest != null) {
+                    player.uniqueId.sendText {
+                        error("Du hast bereits eine Freundschaftsanfrage von $target erhalten.")
                     }
                     return@launch
                 }
