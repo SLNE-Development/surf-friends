@@ -7,7 +7,6 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import dev.slne.surf.friends.core.service.databaseService
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.velocity.plugin
 import dev.slne.surf.friends.velocity.util.getOnlineFriends
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
