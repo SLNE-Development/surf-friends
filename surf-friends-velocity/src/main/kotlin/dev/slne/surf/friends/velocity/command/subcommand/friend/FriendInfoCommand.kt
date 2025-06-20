@@ -49,7 +49,7 @@ class FriendInfoCommand(commandName: String) : CommandAPICommand(commandName) {
                 val targetName = friendShip.friendUuid.getUsernameAsync()
 
                 player.sendText {
-                    info("Freundschaft".toSmallCaps())
+                    info("Freundschaftsinformationen".toSmallCaps())
                     appendNewline()
                     append {
                         info("| ")
