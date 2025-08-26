@@ -4,5 +4,5 @@ interface FriendSettings {
     var announcementsEnabled: Boolean
     var soundsEnabled: Boolean
 
-    fun copy(block: FriendSettings.() -> Unit): FriendSettings
+    fun modify(block: FriendSettings.() -> Unit): FriendSettings
 }

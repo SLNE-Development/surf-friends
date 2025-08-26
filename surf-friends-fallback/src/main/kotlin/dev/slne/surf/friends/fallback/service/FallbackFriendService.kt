@@ -5,31 +5,20 @@ import dev.slne.surf.friends.api.model.FriendRequest
 import dev.slne.surf.friends.api.model.Friendship
 import dev.slne.surf.friends.core.service.FriendService
 import dev.slne.surf.friends.core.service.databaseService
-import dev.slne.surf.friends.core.service.friendService
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import net.kyori.adventure.util.Services
-import java.util.UUID
+import java.util.*
 
 @AutoService(FriendService::class)
 class FallbackFriendService : FriendService, Services.Fallback {
     override suspend fun createFriendship(uuid: UUID, friend: UUID): Friendship {
-        val friendShip = databaseService.getFriendship(uuid, friend)
-
-        if(friendShip != null) {
-            return friendShip
-        }
-
-        return databaseService.addFriendship(uuid, friend)
+        return databaseService.getFriendship(uuid, friend) ?: databaseService.addFriendship(
+            uuid,
+            friend
+        )
     }
 
     override suspend fun removeFriendship(uuid: UUID, friend: UUID) {
-        val friendShip = databaseService.getFriendship(uuid, friend)
-        val targetFriendShip = databaseService.getFriendship(friend, uuid)
-
-        if(friendShip == null || targetFriendShip == null) {
-            return
-        }
-
         databaseService.removeFriendship(uuid, friend)
         databaseService.removeFriendship(friend, uuid)
     }
@@ -53,44 +42,21 @@ class FallbackFriendService : FriendService, Services.Fallback {
     }
 
     override suspend fun sendFriendRequest(sender: UUID, receiver: UUID): FriendRequest {
-        val friendRequest = databaseService.getFriendRequest(sender, receiver)
-
-        if(friendRequest != null) {
-            return friendRequest
-        }
-
-        return databaseService.addFriendRequest(sender, receiver)
+        return databaseService.getFriendRequest(sender, receiver)
+            ?: databaseService.addFriendRequest(sender, receiver)
     }
 
     override suspend fun acceptFriendRequest(sender: UUID, receiver: UUID) {
-        val friendRequest = databaseService.getFriendRequest(sender, receiver)
-
-        if(friendRequest == null) {
-            return
-        }
-
         databaseService.removeFriendRequest(sender, receiver)
         databaseService.addFriendship(sender, receiver)
         databaseService.addFriendship(receiver, sender)
     }
 
     override suspend fun declineFriendRequest(sender: UUID, receiver: UUID) {
-        val friendRequest = databaseService.getFriendRequest(sender, receiver)
-
-        if(friendRequest == null) {
-            return
-        }
-
         databaseService.removeFriendRequest(sender, receiver)
     }
 
     override suspend fun revokeFriendRequest(sender: UUID, receiver: UUID) {
-        val friendRequest = databaseService.getFriendRequest(sender, receiver)
-
-        if(friendRequest == null) {
-            return
-        }
-
         databaseService.removeFriendRequest(sender, receiver)
     }
 
@@ -111,7 +77,7 @@ class FallbackFriendService : FriendService, Services.Fallback {
 
     override suspend fun toggleAnnouncements(uuid: UUID): Boolean {
         val friendSettings = databaseService.getFriendSettings(uuid)
-        val newSettings = friendSettings.copy {
+        val newSettings = friendSettings.modify {
             announcementsEnabled = !friendSettings.announcementsEnabled
         }
 
@@ -120,7 +86,7 @@ class FallbackFriendService : FriendService, Services.Fallback {
 
     override suspend fun toggleSounds(uuid: UUID): Boolean {
         val friendSettings = databaseService.getFriendSettings(uuid)
-        val newSettings = friendSettings.copy {
+        val newSettings = friendSettings.modify {
             soundsEnabled = !friendSettings.soundsEnabled
         }
 

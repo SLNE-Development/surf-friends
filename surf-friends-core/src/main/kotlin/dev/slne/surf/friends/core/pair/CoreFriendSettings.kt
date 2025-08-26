@@ -2,11 +2,11 @@ package dev.slne.surf.friends.core.pair
 
 import dev.slne.surf.friends.api.util.FriendSettings
 
-class CoreFriendSettings(
+data class CoreFriendSettings(
     override var announcementsEnabled: Boolean = true,
     override var soundsEnabled: Boolean = true
 ) : FriendSettings {
-    override fun copy(block: FriendSettings.() -> Unit): CoreFriendSettings {
+    override fun modify(block: FriendSettings.() -> Unit): CoreFriendSettings {
         val copy = CoreFriendSettings(announcementsEnabled, soundsEnabled)
         copy.block()
         return copy
