@@ -13,6 +13,7 @@ import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
@@ -93,14 +94,14 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
                         append {
                             clickRunsCommand("/friend accept ${player.username}")
                             spacer("[")
-                            info("Akzeptieren".toSmallCaps())
+                            text("Akzeptieren", Colors.GREEN)
                             spacer("]")
                         }
                         appendSpace()
                         append {
                             clickRunsCommand("/friend decline ${player.username}")
                             spacer("[")
-                            info("Ablehnen".toSmallCaps())
+                            text("Ablehnen", Colors.RED)
                             spacer("]")
                         }
                     }
