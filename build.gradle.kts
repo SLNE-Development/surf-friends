@@ -16,3 +16,13 @@ buildscript {
         classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.7+")
     }
 }
+
+subprojects {
+    afterEvaluate {
+        plugins.withType<JavaPlugin> {
+            configure<JavaPluginExtension> {
+                toolchain.languageVersion.set(JavaLanguageVersion.of(24))
+            }
+        }
+    }
+}
