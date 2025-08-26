@@ -7,7 +7,6 @@ velocityPluginFile {
     name = "SurfFriends"
     id = "surf-friends"
     authors = listOf("red")
-    description = "Surf Friends Proxy instance."
     version = "${rootProject.version}"
 
     pluginDependencies {
@@ -17,12 +16,7 @@ velocityPluginFile {
 
 dependencies {
     api(project(":surf-friends-core"))
-    api(project(":surf-friends-fallback"))
-}
 
-tasks.shadowJar {
-    archiveFileName = when (findProperty("dev-build")?.toString()) {
-        "true" -> "surf-friends-velocity-${rootProject.version}-dev.jar"
-        else -> "surf-friends-velocity-${rootProject.version}.jar"
-    }
+
+    runtimeOnly(project(":surf-friends-fallback"))
 }
