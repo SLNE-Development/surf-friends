@@ -16,7 +16,7 @@ import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
-class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandName) {
+class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_SEND)
         playerStringArgument("target")
@@ -29,7 +29,7 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
                     }
                 }
 
-                if(player.uniqueId == targetUuid) {
+                if (player.uniqueId == targetUuid) {
                     player.uniqueId.sendText {
                         error("Du kannst dir keine Freundschaftsanfrage selbst senden.")
                     }
@@ -38,7 +38,7 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
 
                 val friendShip = friendService.getFriendship(player.uniqueId, targetUuid)
 
-                if(friendShip != null) {
+                if (friendShip != null) {
                     player.uniqueId.sendText {
                         error("Du bist bereits mit $target befreundet.")
                     }
@@ -48,14 +48,14 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
                 val friendRequest = friendService.getFriendRequest(player.uniqueId, targetUuid)
                 val receivedFriendRequest = friendService.getFriendship(targetUuid, player.uniqueId)
 
-                if(friendRequest != null) {
+                if (friendRequest != null) {
                     player.uniqueId.sendText {
                         error("Du hast bereits eine Freundschaftsanfrage an $target gesendet.")
                     }
                     return@launch
                 }
 
-                if(receivedFriendRequest != null) {
+                if (receivedFriendRequest != null) {
                     player.uniqueId.sendText {
                         error("Du hast bereits eine Freundschaftsanfrage von $target erhalten. Möchtest du diese annehmen?")
                         append {
@@ -84,20 +84,22 @@ class FriendRequestSendCommand(commandName: String): CommandAPICommand(commandNa
 
                 val targetSettings = databaseService.getFriendSettings(targetUuid)
 
-                if(targetSettings.announcementsEnabled) {
+                if (targetSettings.announcementsEnabled) {
                     targetUuid.sendText {
                         info("Du hast eine Freundschaftsanfrage von ")
                         variableValue(player.username)
                         info(" erhalten.")
+                        appendSpace()
                         append {
                             clickRunsCommand("/friend accept ${player.username}")
-                            spacer(" [")
+                            spacer("[")
                             info("Akzeptieren".toSmallCaps())
                             spacer("]")
                         }
+                        appendSpace()
                         append {
                             clickRunsCommand("/friend decline ${player.username}")
-                            spacer(" [")
+                            spacer("[")
                             info("Ablehnen".toSmallCaps())
                             spacer("]")
                         }

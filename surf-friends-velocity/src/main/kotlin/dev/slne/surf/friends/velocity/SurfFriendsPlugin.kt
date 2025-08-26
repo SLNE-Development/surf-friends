@@ -7,7 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.slne.surf.friends.core.service.databaseService
-import dev.slne.surf.friends.velocity.command.FriendCommand
+import dev.slne.surf.friends.velocity.command.friendCommand
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendListCommand
 import dev.slne.surf.friends.velocity.command.subcommand.request.FriendRequestSendCommand
 import dev.slne.surf.friends.velocity.listener.ConnectionListener
@@ -32,7 +32,7 @@ constructor(
 
         databaseService.connect(dataDirectory)
 
-        FriendCommand("friend").register()
+        friendCommand()
         FriendRequestSendCommand("fa").register()
         FriendListCommand("fl").register()
     }
