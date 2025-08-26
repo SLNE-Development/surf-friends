@@ -1,8 +1,8 @@
 package dev.slne.surf.friends.api.util
 
-interface FriendSettingsPair {
+interface FriendSettings {
     var announcementsEnabled: Boolean
     var soundsEnabled: Boolean
 
-    fun copy(block: FriendSettingsPair.() -> Unit): FriendSettingsPair
+    fun modify(block: FriendSettings.() -> Unit): FriendSettings
 }

@@ -2,8 +2,7 @@ package dev.slne.surf.friends.core.service
 
   import dev.slne.surf.friends.api.model.FriendRequest
   import dev.slne.surf.friends.api.model.Friendship
-  import dev.slne.surf.friends.api.util.FriendSettingsPair
-  import dev.slne.surf.friends.core.pair.CoreFriendSettingsPair
+  import dev.slne.surf.friends.core.pair.CoreFriendSettings
   import dev.slne.surf.surfapi.core.api.util.requiredService
   import it.unimi.dsi.fastutil.objects.ObjectSet
   import java.nio.file.Path
@@ -69,7 +68,7 @@ package dev.slne.surf.friends.core.service
        * @param uuid The UUID of the user.
        * @return A pair representing the user's friendship settings.
        */
-      suspend fun getFriendSettings(uuid: UUID): CoreFriendSettingsPair
+      suspend fun getFriendSettings(uuid: UUID): CoreFriendSettings
 
       /**
        * Adds a friendship between two users.
@@ -112,7 +111,7 @@ package dev.slne.surf.friends.core.service
        * @param pair The pair representing the new friendship settings.
        * @return The updated friendship settings.
        */
-      suspend fun updateFriendSettings(uuid: UUID, pair: CoreFriendSettingsPair): CoreFriendSettingsPair
+      suspend fun updateFriendSettings(uuid: UUID, pair: CoreFriendSettings): CoreFriendSettings
 
       companion object {
           /**

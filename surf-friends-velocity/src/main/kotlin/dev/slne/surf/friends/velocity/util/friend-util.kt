@@ -2,6 +2,7 @@ package dev.slne.surf.friends.velocity.util
 
 import dev.slne.surf.friends.core.service.FriendService
 import dev.slne.surf.friends.velocity.plugin
+import dev.slne.surf.friends.velocity.util.isOnline
 import dev.slne.surf.surfapi.core.api.util.mutableObjectListOf
 import it.unimi.dsi.fastutil.objects.ObjectList
 import java.util.UUID
