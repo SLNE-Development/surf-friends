@@ -6,3 +6,7 @@ dependencies {
     api(project(":surf-friends-core"))
     api(libs.surf.database)
 }
+
+kotlin {
+    jvmToolchain(24)
+}
