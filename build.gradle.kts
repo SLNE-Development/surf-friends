@@ -3,8 +3,8 @@ plugins {
 }
 
 allprojects {
-    group = "dev.slne"
-    version = "1.7.0-SNAPSHOT"
+    group = "dev.slne.surf.friends"
+    version = findProperty("version")!!
 }
 
 buildscript {
@@ -13,6 +13,6 @@ buildscript {
         maven("https://repo.slne.dev/repository/maven-public/") { name = "maven-public" }
     }
     dependencies {
-        classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.4+")
+        classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.8+")
     }
 }

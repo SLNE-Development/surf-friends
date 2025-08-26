@@ -22,7 +22,7 @@ class SurfFriendsPlugin
 @Inject
 constructor (
     val proxy: ProxyServer,
-    @DataDirectory val dataDirectory: Path,
+    @param:DataDirectory val dataDirectory: Path,
     suspendingPluginContainer: SuspendingPluginContainer
 ) {
     init {
@@ -32,8 +32,7 @@ constructor (
 
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent) {
-        val eventManager = proxy.eventManager
-        eventManager.register(this, ConnectionListener())
+        proxy.eventManager.register(this, ConnectionListener())
 
         databaseService.connect(dataDirectory)
 

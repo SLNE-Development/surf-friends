@@ -2,13 +2,11 @@ package dev.slne.surf.friends.fallback.service
 
 import com.google.auto.service.AutoService
 
-import dev.slne.surf.database.DatabaseProvider
 import dev.slne.surf.friends.api.model.FriendRequest
 import dev.slne.surf.friends.api.model.Friendship
-import dev.slne.surf.friends.api.util.FriendSettingsPair
 import dev.slne.surf.friends.core.model.CoreFriendRequest
 import dev.slne.surf.friends.core.model.CoreFriendship
-import dev.slne.surf.friends.core.pair.CoreFriendSettingsPair
+import dev.slne.surf.friends.core.pair.CoreFriendSettings
 import dev.slne.surf.friends.core.service.DatabaseService
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
 
@@ -62,7 +60,7 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
     }
 
     override fun connect(path: Path) {
-        DatabaseProvider(path, path).connect()
+        (path, path).connect()
 
         transaction {
             SchemaUtils.create(
@@ -174,12 +172,12 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
 
     override suspend fun getFriendSettings(
         uuid: UUID
-    ) : CoreFriendSettingsPair {
+    ) : CoreFriendSettings {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 FriendSettings.selectAll().where (FriendSettings.userUuid eq uuid)
                     .map { it.toFriendSettings() }
-                    .firstOrNull() ?: CoreFriendSettingsPair()
+                    .firstOrNull() ?: CoreFriendSettings()
             }
         }
     }
@@ -258,8 +256,8 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
 
     override suspend fun updateFriendSettings (
         uuid: UUID,
-        pair: CoreFriendSettingsPair
-    ) : CoreFriendSettingsPair {
+        pair: CoreFriendSettings
+    ) : CoreFriendSettings {
         return withContext(Dispatchers.IO) {
             newSuspendedTransaction {
                 if(FriendSettings.selectAll().where(FriendSettings.userUuid eq uuid).firstOrNull() == null) {
@@ -280,8 +278,8 @@ class FallbackDatabaseService : DatabaseService, Services.Fallback {
         }
     }
 
-    fun ResultRow.toFriendSettings() : CoreFriendSettingsPair {
-        return CoreFriendSettingsPair(
+    fun ResultRow.toFriendSettings() : CoreFriendSettings {
+        return CoreFriendSettings(
             announcementsEnabled = this[FriendSettings.announcementsEnabled],
             soundsEnabled = this[FriendSettings.soundsEnabled]
         )
