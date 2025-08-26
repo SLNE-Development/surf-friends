@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/surf-friends-api/surf-friends.surf-friends-api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/surf-friends-api/surf-friends.surf-friends-api.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/surf-friends-core/surf-friends.surf-friends-core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/surf-friends-core/surf-friends.surf-friends-core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/surf-friends-fallback/surf-friends.surf-friends-fallback.main.iml" filepath="$PROJECT_DIR$/.idea/modules/surf-friends-fallback/surf-friends.surf-friends-fallback.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/surf-friends-velocity/surf-friends.surf-friends-velocity.main.iml" filepath="$PROJECT_DIR$/.idea/modules/surf-friends-velocity/surf-friends.surf-friends-velocity.main.iml" />
+    </modules>
+  </component>
+</project>
