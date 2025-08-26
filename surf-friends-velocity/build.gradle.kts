@@ -20,7 +20,3 @@ dependencies {
 
     runtimeOnly(project(":surf-friends-fallback"))
 }
-
-kotlin {
-    jvmToolchain(24)
-}

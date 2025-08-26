@@ -5,7 +5,3 @@ plugins {
 dependencies {
     api(project(":surf-friends-api"))
 }
-
-kotlin {
-    jvmToolchain(24)
-}
