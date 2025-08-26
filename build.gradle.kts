@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     group = "dev.slne.surf.friends"
-    version = findProperty("version")!!
+    version = findProperty("version") as String
 }
 
 buildscript {
