@@ -6,9 +6,5 @@ data class CoreFriendSettings(
     override var announcementsEnabled: Boolean = true,
     override var soundsEnabled: Boolean = true
 ) : FriendSettings {
-    override fun modify(block: FriendSettings.() -> Unit): CoreFriendSettings {
-        val copy = CoreFriendSettings(announcementsEnabled, soundsEnabled)
-        copy.block()
-        return copy
-    }
+    override fun modify(block: FriendSettings.() -> Unit) = this.apply(block)
 }
