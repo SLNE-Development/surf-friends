@@ -1,3 +1,5 @@
+import dev.slne.surf.surfapi.gradle.util.slneReleases
+
 plugins {
     `maven-publish`
 }
@@ -22,6 +24,14 @@ subprojects {
         plugins.withType<JavaPlugin> {
             configure<JavaPluginExtension> {
                 toolchain.languageVersion.set(JavaLanguageVersion.of(24))
+            }
+        }
+
+        plugins.withType<PublishingPlugin> {
+            configure<PublishingExtension> {
+                repositories{
+                    slneReleases()
+                }
             }
         }
     }
