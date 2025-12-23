@@ -1,12 +1,11 @@
 package dev.slne.surf.friends.velocity.redis.listener
 
-import dev.slne.redis.event.OnRedisEvent
 import dev.slne.surf.friends.velocity.plugin
 import dev.slne.surf.friends.velocity.redis.event.FriendRequestAcceptRedisEvent
 import dev.slne.surf.friends.velocity.redis.event.FriendRequestDenyRedisEvent
 import dev.slne.surf.friends.velocity.redis.event.FriendRequestRevokeRedisEvent
 import dev.slne.surf.friends.velocity.redis.event.FriendRequestSendRedisEvent
-import dev.slne.surf.friends.velocity.util.sendText
+import dev.slne.surf.redis.event.OnRedisEvent
 import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
@@ -53,7 +52,7 @@ object FriendRequestRedisListener {
     fun onFriendRequestSend(event: FriendRequestSendRedisEvent) {
         val player = plugin.proxy.getPlayer(event.target).getOrNull() ?: return
 
-        if(!event.announce) {
+        if (!event.announce) {
             return
         }
 

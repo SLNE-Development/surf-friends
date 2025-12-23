@@ -16,12 +16,6 @@ velocityPluginFile {
 
 dependencies {
     api(project(":surf-friends-core"))
-    implementation("dev.slne:surf-redis:1.0.0-20251223.105653-21")
-
-
+    implementation("dev.slne.surf:surf-redis:1.0.0-SNAPSHOT")
     runtimeOnly(project(":surf-friends-fallback"))
-}
-
-tasks.shadowJar {
-    relocate("dev.slne.redis", "dev.slne.surf.friends.lib.surf.redis")
 }
