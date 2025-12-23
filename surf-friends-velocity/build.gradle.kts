@@ -21,3 +21,7 @@ dependencies {
 
     runtimeOnly(project(":surf-friends-fallback"))
 }
+
+tasks.shadowJar {
+    relocate("dev.slne.redis", "dev.slne.surf.friends.lib.surf.redis")
+}
