@@ -10,6 +10,9 @@ import dev.slne.surf.friends.core.service.databaseService
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
 import dev.slne.surf.friends.velocity.container
+import dev.slne.surf.friends.velocity.redis.event.FriendRequestRevokeRedisEvent
+import dev.slne.surf.friends.velocity.redis.event.FriendRequestSendRedisEvent
+import dev.slne.surf.friends.velocity.redis.redisLoader
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
@@ -85,27 +88,9 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
 
                 val targetSettings = databaseService.getFriendSettings(targetUuid)
 
-                if (targetSettings.announcementsEnabled) {
-                    targetUuid.sendText {
-                        info("Du hast eine Freundschaftsanfrage von ")
-                        variableValue(player.username)
-                        info(" erhalten.")
-                        appendSpace()
-                        append {
-                            clickRunsCommand("/friend accept ${player.username}")
-                            spacer("[")
-                            text("Akzeptieren", Colors.GREEN)
-                            spacer("]")
-                        }
-                        appendSpace()
-                        append {
-                            clickRunsCommand("/friend decline ${player.username}")
-                            spacer("[")
-                            text("Ablehnen", Colors.RED)
-                            spacer("]")
-                        }
-                    }
-                }
+                redisLoader.redisApi.publishEvent(FriendRequestSendRedisEvent(
+                    player.uniqueId, player.username, targetUuid, targetSettings.announcementsEnabled
+                ))
             }
         }
     }

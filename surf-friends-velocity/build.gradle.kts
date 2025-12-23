@@ -16,6 +16,7 @@ velocityPluginFile {
 
 dependencies {
     api(project(":surf-friends-core"))
+    implementation("dev.slne:surf-redis:1.0.0-20251223.105653-21")
 
 
     runtimeOnly(project(":surf-friends-fallback"))

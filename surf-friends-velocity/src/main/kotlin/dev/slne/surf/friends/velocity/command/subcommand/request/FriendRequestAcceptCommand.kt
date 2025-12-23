@@ -10,6 +10,9 @@ import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
 import dev.slne.surf.friends.velocity.container
+import dev.slne.surf.friends.velocity.redis.event.FriendRemoveRedisEvent
+import dev.slne.surf.friends.velocity.redis.event.FriendRequestAcceptRedisEvent
+import dev.slne.surf.friends.velocity.redis.redisLoader
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
@@ -52,11 +55,9 @@ fun CommandAPICommand.friendRequestAcceptCommand() = subcommand("accept") {
                 success(" befreundet.")
             }
 
-            targetUuid.sendText {
-                info("Du bist nun mit ")
-                variableValue(player.username)
-                info(" befreundet.")
-            }
+            redisLoader.redisApi.publishEvent(FriendRequestAcceptRedisEvent(
+                targetUuid, player.uniqueId, player.username
+            ))
         }
     }
 }

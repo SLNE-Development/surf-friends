@@ -12,6 +12,7 @@ import dev.slne.surf.friends.velocity.command.friendCommand
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendListCommand
 import dev.slne.surf.friends.velocity.command.subcommand.request.FriendRequestSendCommand
 import dev.slne.surf.friends.velocity.listener.ConnectionListener
+import dev.slne.surf.friends.velocity.redis.redisLoader
 import java.nio.file.Path
 
 class SurfFriendsPlugin
@@ -32,10 +33,16 @@ constructor(
         proxy.eventManager.register(this, ConnectionListener())
 
         databaseService.connect(dataDirectory)
+        redisLoader.connect()
 
         friendCommand()
         FriendRequestSendCommand("fa").register()
         FriendListCommand("fl").register()
+    }
+
+    @Subscribe
+    fun onProxyShutdown(event: ProxyInitializeEvent) {
+        redisLoader.disconnect()
     }
 
     companion object {
