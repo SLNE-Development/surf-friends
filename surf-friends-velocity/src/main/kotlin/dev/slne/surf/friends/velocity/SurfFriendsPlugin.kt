@@ -7,12 +7,14 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.PluginContainer
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import dev.slne.redis.RedisApi
 import dev.slne.surf.friends.core.service.databaseService
 import dev.slne.surf.friends.velocity.command.friendCommand
 import dev.slne.surf.friends.velocity.command.subcommand.friend.FriendListCommand
 import dev.slne.surf.friends.velocity.command.subcommand.request.FriendRequestSendCommand
 import dev.slne.surf.friends.velocity.listener.ConnectionListener
-import dev.slne.surf.friends.velocity.redis.redisLoader
+import dev.slne.surf.friends.velocity.redis.listener.FriendRequestRedisListener
+import dev.slne.surf.friends.velocity.redis.listener.FriendshipRedisListener
 import java.nio.file.Path
 
 class SurfFriendsPlugin
@@ -33,7 +35,10 @@ constructor(
         proxy.eventManager.register(this, ConnectionListener())
 
         databaseService.connect(dataDirectory)
-        redisLoader.connect()
+        redisApi = RedisApi.create(plugin.dataDirectory)
+        redisApi.subscribeToEvents(FriendshipRedisListener)
+        redisApi.subscribeToEvents(FriendRequestRedisListener)
+        redisApi.freezeAndConnect()
 
         friendCommand()
         FriendRequestSendCommand("fa").register()
@@ -42,13 +47,15 @@ constructor(
 
     @Subscribe
     fun onProxyShutdown(event: ProxyInitializeEvent) {
-        redisLoader.disconnect()
+        redisApi.disconnect()
     }
 
     companion object {
+        lateinit var redisApi: RedisApi
         lateinit var INSTANCE: SurfFriendsPlugin
     }
 }
 
 val container get() = SurfFriendsPlugin.INSTANCE.container
 val plugin get() = SurfFriendsPlugin.INSTANCE
+val redisApi get() = SurfFriendsPlugin.redisApi
