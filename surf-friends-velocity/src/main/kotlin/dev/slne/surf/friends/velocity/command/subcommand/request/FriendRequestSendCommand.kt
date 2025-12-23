@@ -84,18 +84,14 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
 
                 val targetSettings = databaseService.getFriendSettings(targetUuid)
 
-                println("${redisApi.isAlive()}")
-                runCatching {
-                    redisApi.publishEvent(
-                        FriendRequestSendRedisEvent(
-                            player.uniqueId,
-                            player.username,
-                            targetUuid,
-                            targetSettings.announcementsEnabled
-                        )
+                redisApi.publishEvent(
+                    FriendRequestSendRedisEvent(
+                        player.uniqueId,
+                        player.username,
+                        targetUuid,
+                        targetSettings.announcementsEnabled
                     )
-                }
-                println("${redisApi.isAlive()}")
+                )
             }
         }
     }
