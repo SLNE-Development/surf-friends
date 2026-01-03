@@ -36,7 +36,7 @@ constructor(
         proxy.eventManager.register(this, ConnectionListener())
 
         databaseService.connect(dataDirectory)
-        redisApi = RedisApi.create(plugin.dataDirectory)
+        redisApi = RedisApi.create()
         redisApi.subscribeToEvents(FriendshipRedisListener)
         redisApi.subscribeToEvents(FriendRequestRedisListener)
         redisApi.freezeAndConnect()
