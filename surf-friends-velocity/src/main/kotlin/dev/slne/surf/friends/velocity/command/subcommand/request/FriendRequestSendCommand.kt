@@ -1,19 +1,18 @@
 package dev.slne.surf.friends.velocity.command.subcommand.request
 
 import com.github.shynixn.mccoroutine.velocity.launch
-
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.friends.core.service.databaseService
-
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
 import dev.slne.surf.friends.velocity.container
+import dev.slne.surf.friends.velocity.redis.event.FriendRequestSendRedisEvent
+import dev.slne.surf.friends.velocity.redisApi
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.Colors
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
@@ -85,27 +84,14 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
 
                 val targetSettings = databaseService.getFriendSettings(targetUuid)
 
-                if (targetSettings.announcementsEnabled) {
-                    targetUuid.sendText {
-                        info("Du hast eine Freundschaftsanfrage von ")
-                        variableValue(player.username)
-                        info(" erhalten.")
-                        appendSpace()
-                        append {
-                            clickRunsCommand("/friend accept ${player.username}")
-                            spacer("[")
-                            text("Akzeptieren", Colors.GREEN)
-                            spacer("]")
-                        }
-                        appendSpace()
-                        append {
-                            clickRunsCommand("/friend decline ${player.username}")
-                            spacer("[")
-                            text("Ablehnen", Colors.RED)
-                            spacer("]")
-                        }
-                    }
-                }
+                redisApi.publishEvent(
+                    FriendRequestSendRedisEvent(
+                        player.uniqueId,
+                        player.username,
+                        targetUuid,
+                        targetSettings.announcementsEnabled
+                    )
+                )
             }
         }
     }

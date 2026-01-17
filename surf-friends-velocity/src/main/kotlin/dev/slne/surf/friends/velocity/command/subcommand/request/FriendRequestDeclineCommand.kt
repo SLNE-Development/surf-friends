@@ -1,15 +1,15 @@
 package dev.slne.surf.friends.velocity.command.subcommand.request
 
 import com.github.shynixn.mccoroutine.velocity.launch
-
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
 import dev.slne.surf.friends.velocity.container
+import dev.slne.surf.friends.velocity.redis.event.FriendRequestDenyRedisEvent
+import dev.slne.surf.friends.velocity.redisApi
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
 import dev.slne.surf.friends.velocity.util.sendText
 import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
@@ -43,11 +43,11 @@ fun CommandAPICommand.friendRequestDeclineCommand() = subcommand("decline") {
                 success(" abgelehnt.")
             }
 
-            targetUuid.sendText {
-                info("Die Freundschaftsanfrage an ")
-                variableValue(player.username)
-                info(" wurde abgelehnt.")
-            }
+            redisApi.publishEvent(
+                FriendRequestDenyRedisEvent(
+                    targetUuid, player.uniqueId, player.username
+                )
+            )
         }
     }
 }
