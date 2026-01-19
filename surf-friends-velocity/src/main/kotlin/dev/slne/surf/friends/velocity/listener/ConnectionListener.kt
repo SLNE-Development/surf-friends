@@ -69,6 +69,10 @@ class ConnectionListener {
 
     @Subscribe
     fun onDisconnect(event: DisconnectEvent) {
+        if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
+            return
+        }
+
         val player = event.player
 
         container.launch {
