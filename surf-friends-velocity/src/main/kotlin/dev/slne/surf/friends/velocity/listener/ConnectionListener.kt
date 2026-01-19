@@ -22,7 +22,7 @@ class ConnectionListener {
             val friendRequests = friendService.getReceivedFriendRequests(player.uniqueId)
             val onlineFriends = friendService.getOnlineFriends(player.uniqueId)
 
-            if(onlineFriends.isNotEmpty()) {
+            if (onlineFriends.isNotEmpty()) {
                 player.uniqueId.sendText {
                     info("Aktuell sind ")
                     variableValue(onlineFriends.size)
@@ -40,7 +40,7 @@ class ConnectionListener {
                 onlineFriends.forEach {
                     val playerSettings = databaseService.getFriendSettings(it)
 
-                    if(playerSettings.announcementsEnabled) {
+                    if (playerSettings.announcementsEnabled) {
                         it.sendText {
                             variableValue(player.username)
                             info(" ist nun online.")
@@ -49,7 +49,7 @@ class ConnectionListener {
                 }
             }
 
-            if(friendRequests.isNotEmpty()) {
+            if (friendRequests.isNotEmpty()) {
                 player.uniqueId.sendText {
                     info("Du hast noch ")
                     variableValue(friendRequests.size)
@@ -77,7 +77,7 @@ class ConnectionListener {
             onlineFriends.forEach {
                 val playerSettings = databaseService.getFriendSettings(it)
 
-                if(playerSettings.announcementsEnabled) {
+                if (playerSettings.announcementsEnabled) {
                     it.sendText {
                         variableValue(player.username)
                         info(" ist nun offline.")

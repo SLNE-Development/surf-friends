@@ -7,12 +7,10 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType
 import dev.jorel.commandapi.executors.CommandArguments
-import dev.slne.surf.friends.velocity.plugin
-import kotlin.apply
-import kotlin.collections.map
-import kotlin.jvm.java
+import dev.slne.surf.core.api.common.surfCoreApi
 
-class PlayerStringArgument(nodeName: String) : Argument<String>(nodeName, StringArgumentType.string()) {
+class PlayerStringArgument(nodeName: String) :
+    Argument<String>(nodeName, StringArgumentType.string()) {
     override fun getPrimitiveType(): Class<String> {
         return String::class.java
     }
@@ -31,7 +29,7 @@ class PlayerStringArgument(nodeName: String) : Argument<String>(nodeName, String
 
     init {
         replaceSuggestions(ArgumentSuggestions.stringCollection {
-            plugin.proxy.allPlayers.map { it.username }
+            surfCoreApi.getOnlinePlayers().mapNotNull { it.lastKnownName }
         })
     }
 }
