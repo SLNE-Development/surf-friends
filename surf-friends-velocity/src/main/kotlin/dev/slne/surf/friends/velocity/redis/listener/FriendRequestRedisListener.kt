@@ -17,7 +17,7 @@ object FriendRequestRedisListener {
         val player = plugin.proxy.getPlayer(event.requester).getOrNull() ?: return
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Du bist nun mit ")
             variableValue(event.targetName)
             info(" befreundet.")
@@ -29,7 +29,7 @@ object FriendRequestRedisListener {
         val player = plugin.proxy.getPlayer(event.requester).getOrNull() ?: return
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Die Freundschaftsanfrage an ")
             variableValue(event.targetName)
             info(" wurde abgelehnt.")
@@ -41,7 +41,7 @@ object FriendRequestRedisListener {
         val player = plugin.proxy.getPlayer(event.target).getOrNull() ?: return
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Die Freundschaftsanfrage von ")
             variableValue(event.requesterName)
             info(" wurde zurückgezogen.")
@@ -57,7 +57,7 @@ object FriendRequestRedisListener {
         }
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Du hast eine Freundschaftsanfrage von ")
             variableValue(event.requesterName)
             info(" erhalten.")
