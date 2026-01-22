@@ -12,7 +12,7 @@ object FriendshipRedisListener {
         val player = plugin.proxy.getPlayer(event.target).getOrNull() ?: return
 
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Die Freundschaft mit ")
             variableValue(event.removerName)
             info(" wurde beendet.")
