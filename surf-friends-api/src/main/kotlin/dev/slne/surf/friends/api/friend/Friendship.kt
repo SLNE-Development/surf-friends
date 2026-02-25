@@ -4,7 +4,7 @@ import java.time.OffsetDateTime
 import java.util.*
 
 data class Friendship(
-    val userUuid: UUID,
-    val friendUuid: UUID,
+    val requestedBy: UUID,
+    val acceptedBy: UUID,
     val createdAt: OffsetDateTime
 )
