@@ -47,6 +47,10 @@ class FriendPlayerRepository {
         }
     }
 
+    suspend fun savePlayer(player: FriendPlayer) = suspendTransaction {
+        
+    }
+
     private fun createPlayer(
         row: ResultRow,
         sentRequests: ObjectSet<FriendRequest>,
