@@ -3,6 +3,7 @@ package dev.slne.surf.friends.backend.repository
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.or
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.friends.api.friend.Friendship
@@ -20,6 +21,14 @@ class FriendShipRepository {
             (FriendShipsTable.requesterUuid eq uuid) or (FriendShipsTable.acceptorUuid eq uuid)
         }.map { createFriendShip(it) }
     }.toSet().toObjectSet()
+
+    suspend fun saveFriendship(friendship: Friendship) = suspendTransaction {
+        FriendShipsTable.insert {
+            it[requesterUuid] = friendship.requestedBy
+            it[acceptorUuid] = friendship.acceptedBy
+            it[createdAt] = friendship.createdAt
+        }
+    }
 
     private fun createFriendShip(row: ResultRow) = Friendship(
         requestedBy = row[FriendShipsTable.requesterUuid],

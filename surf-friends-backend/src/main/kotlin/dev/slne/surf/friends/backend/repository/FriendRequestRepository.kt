@@ -2,6 +2,7 @@ package dev.slne.surf.friends.backend.repository
 
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.friends.api.friend.FriendRequest
@@ -24,6 +25,13 @@ class FriendRequestRepository {
             .map { createRequest(it) }
     }.toSet().toObjectSet()
 
+    suspend fun saveRequest(request: FriendRequest) = suspendTransaction {
+        FriendRequestsTable.insert {
+            it[senderUuid] = request.senderUuid
+            it[receiverUuid] = request.receiverUuid
+            it[createdAt] = request.sentAt
+        }
+    }
 
     private fun createRequest(row: ResultRow) = FriendRequest(
         senderUuid = row[FriendRequestsTable.senderUuid],

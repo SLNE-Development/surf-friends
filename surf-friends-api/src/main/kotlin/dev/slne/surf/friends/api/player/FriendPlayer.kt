@@ -11,6 +11,7 @@ import java.util.*
 data class FriendPlayer(
     val uuid: @Contextual UUID,
     val name: String,
+    val texture: String,
 
     val friends: ObjectSet<Friendship>,
     val sentFriendRequests: ObjectSet<FriendRequest>,

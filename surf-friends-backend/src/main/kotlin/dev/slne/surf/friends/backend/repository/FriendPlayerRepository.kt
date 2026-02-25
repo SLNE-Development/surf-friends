@@ -48,7 +48,11 @@ class FriendPlayerRepository {
     }
 
     suspend fun savePlayer(player: FriendPlayer) = suspendTransaction {
-        
+        FriendPlayerTable.insert {
+            it[playerUuid] = player.uuid
+            it[playerName] = player.name
+            it[texture] = player.texture
+        }
     }
 
     private fun createPlayer(
@@ -60,6 +64,7 @@ class FriendPlayerRepository {
         FriendPlayer(
             uuid = row[FriendPlayerTable.playerUuid],
             name = row[FriendPlayerTable.playerName],
+            texture = row[FriendPlayerTable.texture],
             sentFriendRequests = sentRequests,
             receivedFriendRequests = receivedRequests,
             friends = friendShips
