@@ -1,10 +1,13 @@
 package dev.slne.surf.friends.api.friend
 
-import java.time.OffsetDateTime
+import dev.slne.surf.surfapi.core.api.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.util.*
 
+@Serializable
 data class FriendRequest(
-    val senderUuid: UUID,
-    val receiverUuid: UUID,
-    val sentAt: OffsetDateTime
+    val senderUuid: @Contextual UUID,
+    val receiverUuid: @Contextual UUID,
+    val sentAt: SerializableOffsetDateTime
 )
