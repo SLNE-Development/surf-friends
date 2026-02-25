@@ -11,12 +11,18 @@
       <module name="surf-friends.surf-friends-api" options="-parameters" />
       <module name="surf-friends.surf-friends-api.main" options="-parameters" />
       <module name="surf-friends.surf-friends-api.test" options="-parameters" />
+      <module name="surf-friends.surf-friends-backend" options="-parameters" />
+      <module name="surf-friends.surf-friends-backend.main" options="-parameters" />
+      <module name="surf-friends.surf-friends-backend.test" options="-parameters" />
       <module name="surf-friends.surf-friends-core" options="-parameters" />
       <module name="surf-friends.surf-friends-core.main" options="-parameters" />
       <module name="surf-friends.surf-friends-core.test" options="-parameters" />
       <module name="surf-friends.surf-friends-fallback" options="-parameters" />
       <module name="surf-friends.surf-friends-fallback.main" options="-parameters" />
       <module name="surf-friends.surf-friends-fallback.test" options="-parameters" />
+      <module name="surf-friends.surf-friends-paper" options="-parameters" />
+      <module name="surf-friends.surf-friends-paper.main" options="-parameters" />
+      <module name="surf-friends.surf-friends-paper.test" options="-parameters" />
       <module name="surf-friends.surf-friends-server" options="-parameters" />
       <module name="surf-friends.surf-friends-server.main" options="-parameters" />
       <module name="surf-friends.surf-friends-server.test" options="-parameters" />

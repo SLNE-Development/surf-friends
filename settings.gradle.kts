@@ -4,4 +4,6 @@ plugins {
 include("surf-friends-api")
 include("surf-friends-core")
 include("surf-friends-velocity")
-include("surf-friends-fallback")
+include("surf-friends-backend")
+
+include("surf-friends-paper")

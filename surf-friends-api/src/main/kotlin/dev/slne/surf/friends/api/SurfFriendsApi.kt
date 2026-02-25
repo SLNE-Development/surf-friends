@@ -1,9 +1,9 @@
 package dev.slne.surf.friends.api
 
-import dev.slne.surf.friends.api.model.FriendRequest
-import dev.slne.surf.friends.api.model.Friendship
+import dev.slne.surf.friends.api.friend.FriendRequest
+import dev.slne.surf.friends.api.friend.Friendship
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import java.util.UUID
+import java.util.*
 
 interface SurfFriendsApi {
     /**

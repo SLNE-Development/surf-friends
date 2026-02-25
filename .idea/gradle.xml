@@ -10,8 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/surf-friends-api" />
+            <option value="$PROJECT_DIR$/surf-friends-backend" />
             <option value="$PROJECT_DIR$/surf-friends-core" />
-            <option value="$PROJECT_DIR$/surf-friends-fallback" />
+            <option value="$PROJECT_DIR$/surf-friends-paper" />
             <option value="$PROJECT_DIR$/surf-friends-velocity" />
           </set>
         </option>

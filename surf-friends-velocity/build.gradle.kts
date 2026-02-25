@@ -21,5 +21,5 @@ velocityPluginFile {
 
 dependencies {
     api(project(":surf-friends-core"))
-    runtimeOnly(project(":surf-friends-fallback"))
+    runtimeOnly(project(":surf-friends-backend"))
 }
