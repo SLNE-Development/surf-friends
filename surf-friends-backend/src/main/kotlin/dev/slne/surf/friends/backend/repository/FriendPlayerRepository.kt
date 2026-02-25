@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.backend.repository
 
+import com.destroystokyo.paper.profile.PlayerProfile
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
@@ -9,24 +10,24 @@ import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.api.friend.Friendship
 import dev.slne.surf.friends.api.player.FriendPlayer
 import dev.slne.surf.friends.backend.table.FriendPlayerTable
+import dev.slne.surf.surfapi.bukkit.api.command.util.idOrThrow
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.firstOrNull
-import org.bukkit.entity.Player
 
 val friendPlayerRepository = FriendPlayerRepository()
 
 class FriendPlayerRepository {
-    suspend fun loadOrCreatePlayer(player: Player) = suspendTransaction {
-        val uuid = player.uniqueId
+    suspend fun loadOrCreatePlayer(profile: PlayerProfile) = suspendTransaction {
+        val uuid = profile.idOrThrow()
         val row =
             FriendPlayerTable.selectAll().where(FriendPlayerTable.playerUuid eq uuid).firstOrNull()
 
         if (row == null) {
             FriendPlayerTable.insert {
                 it[playerUuid] = uuid
-                it[playerName] = player.name
+                it[playerName] = profile.name ?: error("Profile name is null for uuid $uuid")
                 it[texture] =
-                    player.playerProfile.properties.find { property -> property.name == "textures" }?.value
+                    profile.properties.find { property -> property.name == "textures" }?.value
                         ?: ""
             }
 
