@@ -11,4 +11,8 @@ class FriendShipServiceImpl : FriendShipService, Services.Fallback {
     override suspend fun saveFriendShip(friendShip: Friendship) {
         friendShipRepository.saveFriendship(friendShip)
     }
+
+    override suspend fun deleteFriendShip(friendShip: Friendship) {
+        friendShipRepository.deleteFriendship(friendShip)
+    }
 }

@@ -7,4 +7,5 @@ val friendShipService = requiredService<FriendShipService>()
 
 interface FriendShipService {
     suspend fun saveFriendShip(friendShip: Friendship)
+    suspend fun deleteFriendShip(friendShip: Friendship)
 }

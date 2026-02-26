@@ -1,8 +1,10 @@
 package dev.slne.surf.friends.backend.repository
 
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.and
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.or
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteWhere
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
@@ -29,6 +31,13 @@ class FriendShipRepository {
             it[requesterName] = friendship.requesterName
             it[acceptorName] = friendship.acceptorName
             it[createdAt] = friendship.createdAt
+        }
+    }
+
+    suspend fun deleteFriendship(friendship: Friendship) = suspendTransaction {
+        FriendShipsTable.deleteWhere {
+            (FriendShipsTable.requesterUuid eq friendship.requestedBy) and
+                    (FriendShipsTable.acceptorUuid eq friendship.acceptedBy)
         }
     }
 
