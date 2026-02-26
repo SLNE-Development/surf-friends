@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.paper.command.argument.friend
+package dev.slne.surf.friends.paper.command.argument.request
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandTree
@@ -6,48 +6,50 @@ import dev.jorel.commandapi.arguments.Argument
 import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.CustomArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.slne.surf.friends.api.player.FriendPlayer
+import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.core.service.friendPlayerService
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.uuid
 
-class FriendPlayerArgument(nodeName: String) :
-    CustomArgument<FriendPlayer, String>(StringArgument(nodeName), { info ->
-        friendPlayerService.players.firstOrNull { it.name == info.input } // TODO: Only allow real friends, not every online friend player
+class SentFriendRequestArgument(nodeName: String) :
+    CustomArgument<FriendRequest, String>(StringArgument(nodeName), { info ->
+        val senderPlayer = friendPlayerService.players.first { it.uuid == info.sender.uuid() }
+
+        senderPlayer.sentFriendRequests.firstOrNull { it.receiverName == info.input }
             ?: throw CustomArgumentException.fromAdventureComponent(
                 buildText {
                     appendErrorPrefix()
-                    error("Der Spieler wurde nicht gefunden.")
+                    error("Du hast keine Freundschaftsanfrage an diesen Spieler gesendet.")
                 })
     }) {
     init {
         this.replaceSuggestions(
             ArgumentSuggestions.stringCollection { sender ->
-                friendPlayerService.players.find { it.uuid == sender.sender.uuid() }?.friends?.map { it.acceptorName }
+                friendPlayerService.players.first { it.uuid == sender.sender.uuid() }.sentFriendRequests.map { it.receiverName }
             }
         )
     }
 }
 
-inline fun CommandTree.friendPlayerArgument(
+inline fun CommandTree.sentFriendRequestArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
 ): CommandTree = then(
-    FriendPlayerArgument(nodeName).setOptional(optional).apply(block)
+    SentFriendRequestArgument(nodeName).setOptional(optional).apply(block)
 )
 
-inline fun Argument<*>.friendPlayerArgument(
+inline fun Argument<*>.sentFriendRequestArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
 ): Argument<*> = then(
-    FriendPlayerArgument(nodeName).setOptional(optional).apply(block)
+    SentFriendRequestArgument(nodeName).setOptional(optional).apply(block)
 )
 
-inline fun CommandAPICommand.friendPlayerArgument(
+inline fun CommandAPICommand.sentFriendRequestArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
 ): CommandAPICommand =
-    withArguments(FriendPlayerArgument(nodeName).setOptional(optional).apply(block))
+    withArguments(SentFriendRequestArgument(nodeName).setOptional(optional).apply(block))
