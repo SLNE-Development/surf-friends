@@ -16,4 +16,10 @@ data class FriendPlayer(
     val friends: ObjectSet<Friendship>,
     val sentFriendRequests: ObjectSet<FriendRequest>,
     val receivedFriendRequests: ObjectSet<FriendRequest>
-)
+) {
+    fun hasFriend(uuid: UUID) =
+        friends.any { it.acceptedBy == uuid } || friends.any { it.requestedBy == uuid }
+
+    fun hasSentFriendRequest(uuid: UUID) = sentFriendRequests.any { it.receiverUuid == uuid }
+    fun hasReceivedFriendRequest(uuid: UUID) = receivedFriendRequests.any { it.senderUuid == uuid }
+}
