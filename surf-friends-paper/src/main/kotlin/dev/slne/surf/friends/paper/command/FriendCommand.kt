@@ -2,6 +2,7 @@ package dev.slne.surf.friends.paper.command
 
 import dev.jorel.commandapi.kotlindsl.commandTree
 import dev.jorel.commandapi.kotlindsl.literalArgument
+import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.friends.api.friend.FriendRequest
@@ -124,7 +125,22 @@ fun friendCommand() = commandTree("friend") {
     }
 
     literalArgument("list") {
+        playerExecutor { player, _ ->
+            val friendPlayer = player.friendPlayer
 
+            if (friendPlayer.friends.isEmpty()) {
+                player.sendText {
+                    appendInfoPrefix()
+                    info("Du hast keine Freunde.")
+                }
+                return@playerExecutor
+            }
+
+            player.sendText {
+                appendNewline()
+                append(friendPagination(player.uniqueId).renderComponent(friendPlayer.friends))
+            }
+        }
     }
 
     literalArgument("requests") {
@@ -159,9 +175,25 @@ private fun friendPagination(ownUuid: UUID) = Pagination<Friendship> {
 }
 
 private val sendRequestsPagination = Pagination<FriendRequest> {
+    title { primary("Gesendete Anfragen".toSmallCaps(), TextDecoration.BOLD) }
 
+    rowRenderer { friendRequest, _ ->
+        listOf(buildText {
+            spacer("-")
+            appendSpace()
+            variableValue(friendRequest.receiverName)
+        })
+    }
 }
 
 private val receivedRequestsPagination = Pagination<FriendRequest> {
+    title { primary("Empfangene Anfragen".toSmallCaps(), TextDecoration.BOLD) }
 
+    rowRenderer { friendRequest, _ ->
+        listOf(buildText {
+            spacer("-")
+            appendSpace()
+            variableValue(friendRequest.senderName)
+        })
+    }
 }
