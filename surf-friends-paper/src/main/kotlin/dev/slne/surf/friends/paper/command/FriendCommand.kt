@@ -43,6 +43,14 @@ fun friendCommand() = commandTree("friend") {
                     return@playerExecutorSuspend
                 }
 
+                if (target.uuid == player.uniqueId) {
+                    player.sendText {
+                        appendErrorPrefix()
+                        error("Du kannst dich nicht selbst als Freund hinzufügen.")
+                    }
+                    return@playerExecutorSuspend
+                }
+
                 val friendPlayer = player.friendPlayer
 
                 if (friendPlayer.hasFriend(target.uuid)) {
