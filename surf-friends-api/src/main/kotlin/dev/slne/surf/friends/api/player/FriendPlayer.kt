@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.api.player
 
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.api.friend.Friendship
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -22,4 +23,8 @@ data class FriendPlayer(
 
     fun hasSentFriendRequest(uuid: UUID) = sentFriendRequests.any { it.receiverUuid == uuid }
     fun hasReceivedFriendRequest(uuid: UUID) = receivedFriendRequests.any { it.senderUuid == uuid }
+
+    fun getOnlineFriendCount() = friends.count { ship ->
+        surfCoreApi.getOnlinePlayers().any { it.uuid == ship.getOtherUuid(uuid) }
+    }
 }

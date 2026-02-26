@@ -31,4 +31,5 @@ data class Friendship(
     val createdAt: SerializableOffsetDateTime
 ) {
     fun getOtherName(ownUuid: UUID) = if (requestedBy == ownUuid) acceptorName else requesterName
+    fun getOtherUuid(ownUuid: UUID) = if (requestedBy == ownUuid) acceptedBy else requestedBy
 }
