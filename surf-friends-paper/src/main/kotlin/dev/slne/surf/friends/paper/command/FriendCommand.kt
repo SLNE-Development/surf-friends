@@ -53,6 +53,14 @@ fun friendCommand() = commandTree("friend") {
 
                 val friendPlayer = player.friendPlayer
 
+                if (friendPlayer.hasSentFriendRequest(target.uuid)) {
+                    player.sendText {
+                        appendErrorPrefix()
+                        error("Du hast diesem Spieler bereits eine Freundschaftsanfrage gesendet.")
+                    }
+                    return@playerExecutorSuspend
+                }
+
                 if (friendPlayer.hasFriend(target.uuid)) {
                     player.sendText {
                         appendErrorPrefix()
@@ -198,10 +206,10 @@ fun friendCommand() = commandTree("friend") {
     literalArgument("accept") {
         receivedFriendRequestArgument("receivedRequest") {
             playerExecutorSuspend { player, args ->
-                val friendRequest: FriendRequest by args
+                val receivedRequest: FriendRequest by args
                 val friendPlayer = player.friendPlayer
 
-                if (friendPlayer.hasFriend(friendRequest.senderUuid)) {
+                if (friendPlayer.hasFriend(receivedRequest.senderUuid)) {
                     player.sendText {
                         appendErrorPrefix()
                         error("Du bist bereits mit diesem Spieler befreundet.")
@@ -210,19 +218,19 @@ fun friendCommand() = commandTree("friend") {
                 }
 
                 val friendship = friendship(
-                    requestedBy = friendRequest.senderUuid,
-                    acceptedBy = friendRequest.receiverUuid,
-                    requesterName = friendRequest.senderName,
-                    acceptorName = friendRequest.receiverName
+                    requestedBy = receivedRequest.senderUuid,
+                    acceptedBy = receivedRequest.receiverUuid,
+                    requesterName = receivedRequest.senderName,
+                    acceptorName = receivedRequest.receiverName
                 )
 
-                friendRequestService.deleteFriendRequest(friendRequest)
+                friendRequestService.deleteFriendRequest(receivedRequest)
                 friendShipService.saveFriendShip(friendship)
 
                 player.sendText {
                     appendSuccessPrefix()
                     success("Du hast die Freundschaftsanfrage von ")
-                    variableValue(friendRequest.senderName)
+                    variableValue(receivedRequest.senderName)
                     success(" angenommen.")
                 }
 
@@ -234,14 +242,14 @@ fun friendCommand() = commandTree("friend") {
     literalArgument("decline") {
         receivedFriendRequestArgument("receivedRequest") {
             playerExecutorSuspend { player, args ->
-                val friendRequest: FriendRequest by args
+                val receivedRequest: FriendRequest by args
 
-                friendRequestService.deleteFriendRequest(friendRequest)
+                friendRequestService.deleteFriendRequest(receivedRequest)
 
                 player.sendText {
                     appendSuccessPrefix()
                     success("Du hast die Freundschaftsanfrage von ")
-                    variableValue(friendRequest.senderName)
+                    variableValue(receivedRequest.senderName)
                     success(" abgelehnt.")
                 }
 
@@ -253,14 +261,14 @@ fun friendCommand() = commandTree("friend") {
     literalArgument("revoke") {
         sentFriendRequestArgument("sentRequest") {
             playerExecutorSuspend { player, args ->
-                val friendRequest: FriendRequest by args
+                val sentRequest: FriendRequest by args
 
-                friendRequestService.deleteFriendRequest(friendRequest)
+                friendRequestService.deleteFriendRequest(sentRequest)
 
                 player.sendText {
                     appendSuccessPrefix()
                     success("Du hast die Freundschaftsanfrage an ")
-                    variableValue(friendRequest.receiverName)
+                    variableValue(sentRequest.receiverName)
                     success(" zurückgezogen.")
                 }
 
