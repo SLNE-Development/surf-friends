@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.paper.command.argument
+package dev.slne.surf.friends.paper.command.argument.friend
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.CommandTree
