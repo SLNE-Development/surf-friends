@@ -31,7 +31,7 @@ class ReceivedFriendRequestArgument(nodeName: String) :
     }
 }
 
-inline fun CommandTree.friendRequestArgument(
+inline fun CommandTree.receivedFriendRequestArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
@@ -39,7 +39,7 @@ inline fun CommandTree.friendRequestArgument(
     ReceivedFriendRequestArgument(nodeName).setOptional(optional).apply(block)
 )
 
-inline fun Argument<*>.friendRequestArgument(
+inline fun Argument<*>.receivedFriendRequestArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}
@@ -47,7 +47,7 @@ inline fun Argument<*>.friendRequestArgument(
     ReceivedFriendRequestArgument(nodeName).setOptional(optional).apply(block)
 )
 
-inline fun CommandAPICommand.friendRequestArgument(
+inline fun CommandAPICommand.receivedFriendRequestArgument(
     nodeName: String,
     optional: Boolean = false,
     block: Argument<*>.() -> Unit = {}

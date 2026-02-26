@@ -11,4 +11,8 @@ class FriendRequestServiceImpl : FriendRequestService, Services.Fallback {
     override suspend fun saveFriendRequest(friendRequest: FriendRequest) {
         friendRequestRepository.saveRequest(friendRequest)
     }
+
+    override suspend fun deleteFriendRequest(friendRequest: FriendRequest) {
+        friendRequestRepository.deleteRequest(friendRequest)
+    }
 }

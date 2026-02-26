@@ -1,6 +1,7 @@
 package dev.slne.surf.friends.paper.command
 
 import dev.jorel.commandapi.kotlindsl.commandTree
+import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.literalArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.core.api.common.player.SurfPlayer
@@ -8,10 +9,13 @@ import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.api.friend.Friendship
 import dev.slne.surf.friends.api.friend.friendRequest
+import dev.slne.surf.friends.api.friend.friendship
 import dev.slne.surf.friends.api.player.FriendPlayer
 import dev.slne.surf.friends.core.service.friendRequestService
 import dev.slne.surf.friends.core.service.friendShipService
 import dev.slne.surf.friends.paper.command.argument.friend.offlineFriendArgument
+import dev.slne.surf.friends.paper.command.argument.request.receivedFriendRequestArgument
+import dev.slne.surf.friends.paper.command.argument.request.sentFriendRequestArgument
 import dev.slne.surf.friends.paper.permission.PermissionRegistry
 import dev.slne.surf.friends.paper.util.friendPlayer
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
@@ -184,15 +188,77 @@ fun friendCommand() = commandTree("friend") {
     }
 
     literalArgument("accept") {
+        receivedFriendRequestArgument("receivedRequest") {
+            playerExecutorSuspend { player, args ->
+                val friendRequest: FriendRequest by args
+                val friendPlayer = player.friendPlayer
 
+                if (friendPlayer.hasFriend(friendRequest.senderUuid)) {
+                    player.sendText {
+                        appendErrorPrefix()
+                        error("Du bist bereits mit diesem Spieler befreundet.")
+                    }
+                    return@playerExecutorSuspend
+                }
+
+                val friendship = friendship(
+                    requestedBy = friendRequest.senderUuid,
+                    acceptedBy = friendRequest.receiverUuid,
+                    requesterName = friendRequest.senderName,
+                    acceptorName = friendRequest.receiverName
+                )
+
+                friendRequestService.deleteFriendRequest(friendRequest)
+                friendShipService.saveFriendShip(friendship)
+
+                player.sendText {
+                    appendSuccessPrefix()
+                    success("Du hast die Freundschaftsanfrage von ")
+                    variableValue(friendRequest.senderName)
+                    success(" angenommen.")
+                }
+
+                // TODO: Notify sender if online and if settings allow it
+            }
+        }
     }
 
     literalArgument("decline") {
+        receivedFriendRequestArgument("receivedRequest") {
+            playerExecutorSuspend { player, args ->
+                val friendRequest: FriendRequest by args
 
+                friendRequestService.deleteFriendRequest(friendRequest)
+
+                player.sendText {
+                    appendSuccessPrefix()
+                    success("Du hast die Freundschaftsanfrage von ")
+                    variableValue(friendRequest.senderName)
+                    success(" abgelehnt.")
+                }
+
+                // TODO: Notify sender if online and if settings allow it
+            }
+        }
     }
 
     literalArgument("revoke") {
+        sentFriendRequestArgument("sentRequest") {
+            playerExecutorSuspend { player, args ->
+                val friendRequest: FriendRequest by args
 
+                friendRequestService.deleteFriendRequest(friendRequest)
+
+                player.sendText {
+                    appendSuccessPrefix()
+                    success("Du hast die Freundschaftsanfrage an ")
+                    variableValue(friendRequest.receiverName)
+                    success(" zurückgezogen.")
+                }
+
+                // TODO: Notify receiver if online and if settings allow it
+            }
+        }
     }
 }
 

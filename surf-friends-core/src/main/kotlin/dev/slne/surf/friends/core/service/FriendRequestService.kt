@@ -7,4 +7,5 @@ val friendRequestService = requiredService<FriendRequestService>()
 
 interface FriendRequestService {
     suspend fun saveFriendRequest(friendRequest: FriendRequest)
+    suspend fun deleteFriendRequest(friendRequest: FriendRequest)
 }

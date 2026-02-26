@@ -1,7 +1,9 @@
 package dev.slne.surf.friends.backend.repository
 
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.ResultRow
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.and
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.deleteWhere
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
@@ -24,6 +26,13 @@ class FriendRequestRepository {
         FriendRequestsTable.selectAll().where(FriendRequestsTable.receiverUuid eq uuid)
             .map { createRequest(it) }
     }.toSet().toObjectSet()
+
+    suspend fun deleteRequest(request: FriendRequest) = suspendTransaction {
+        FriendRequestsTable.deleteWhere {
+            (FriendRequestsTable.senderUuid eq request.senderUuid) and
+                    (FriendRequestsTable.receiverUuid eq request.receiverUuid)
+        }
+    }
 
     suspend fun saveRequest(request: FriendRequest) = suspendTransaction {
         FriendRequestsTable.insert {
