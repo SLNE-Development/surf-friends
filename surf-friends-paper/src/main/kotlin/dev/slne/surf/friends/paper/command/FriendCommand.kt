@@ -4,6 +4,8 @@ import dev.jorel.commandapi.kotlindsl.commandTree
 import dev.jorel.commandapi.kotlindsl.literalArgument
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.friends.api.friend.FriendRequest
+import dev.slne.surf.friends.api.friend.Friendship
 import dev.slne.surf.friends.api.friend.friendRequest
 import dev.slne.surf.friends.api.player.FriendPlayer
 import dev.slne.surf.friends.core.service.friendRequestService
@@ -13,7 +15,12 @@ import dev.slne.surf.friends.paper.permission.PermissionRegistry
 import dev.slne.surf.friends.paper.util.friendPlayer
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.command.args.awaiting
+import dev.slne.surf.surfapi.core.api.font.toSmallCaps
+import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
+import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
+import net.kyori.adventure.text.format.TextDecoration
+import java.util.*
 
 fun friendCommand() = commandTree("friend") {
     withPermission(PermissionRegistry.PREFIX_COMMAND)
@@ -135,4 +142,26 @@ fun friendCommand() = commandTree("friend") {
     literalArgument("revoke") {
 
     }
+}
+
+private fun friendPagination(ownUuid: UUID) = Pagination<Friendship> {
+    title { primary("Deine Freunde".toSmallCaps(), TextDecoration.BOLD) }
+
+    rowRenderer { friendship, _ ->
+        listOf(buildText {
+            spacer("-")
+            appendSpace()
+            variableValue(friendship.getOtherName(ownUuid))
+
+            // TODO: Display if online, if yes: where
+        })
+    }
+}
+
+private val sendRequestsPagination = Pagination<FriendRequest> {
+
+}
+
+private val receivedRequestsPagination = Pagination<FriendRequest> {
+
 }
