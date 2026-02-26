@@ -29,7 +29,7 @@ object PlayerConnectionListener : Listener {
                 info("Du hast noch ")
                 variableValue(friendPlayer.receivedFriendRequests.size)
                 info(" offene Freundschaftsanfragen.")
-            }
+            } // TODO: Only sent if enabled in player settings
         }
 
         if (friendPlayer.getOnlineFriendCount() > 0) {
@@ -39,7 +39,7 @@ object PlayerConnectionListener : Listener {
                 variableValue(friendPlayer.getOnlineFriendCount())
                 info(" Freunde online.")
             }
-        }
+        } // TODO: Only sent if enabled in player settings
     }
 
     @EventHandler
