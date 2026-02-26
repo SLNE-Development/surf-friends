@@ -29,6 +29,8 @@ class FriendRequestRepository {
         FriendRequestsTable.insert {
             it[senderUuid] = request.senderUuid
             it[receiverUuid] = request.receiverUuid
+            it[senderName] = request.senderName
+            it[receiverName] = request.receiverName
             it[createdAt] = request.sentAt
         }
     }
@@ -36,6 +38,8 @@ class FriendRequestRepository {
     private fun createRequest(row: ResultRow) = FriendRequest(
         senderUuid = row[FriendRequestsTable.senderUuid],
         receiverUuid = row[FriendRequestsTable.receiverUuid],
+        senderName = row[FriendRequestsTable.senderName],
+        receiverName = row[FriendRequestsTable.receiverName],
         sentAt = row[FriendRequestsTable.createdAt]
     )
 }

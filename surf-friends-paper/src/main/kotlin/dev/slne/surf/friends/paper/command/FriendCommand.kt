@@ -4,6 +4,7 @@ import dev.jorel.commandapi.kotlindsl.commandTree
 import dev.jorel.commandapi.kotlindsl.literalArgument
 import dev.slne.surf.core.api.common.player.SurfPlayer
 import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.friends.api.friend.friendRequest
 import dev.slne.surf.friends.paper.command.argument.friend.offlineFriendArgument
 import dev.slne.surf.friends.paper.permission.PermissionRegistry
 import dev.slne.surf.friends.paper.util.friendPlayer
@@ -29,7 +30,23 @@ fun friendCommand() = commandTree("friend") {
 
                 val friendPlayer = player.friendPlayer
 
-                if(friendPlayer.friends)
+                if (friendPlayer.hasFriend(target.uuid)) {
+                    player.sendText {
+                        appendErrorPrefix()
+                        error("Du bist bereits mit diesem Spieler befreundet.")
+                    }
+                    return@playerExecutorSuspend
+                }
+
+                if (friendPlayer.hasReceivedFriendRequest(target.uuid)) {
+                    // TODO: Accept request
+                    return@playerExecutorSuspend
+                }
+
+                val friendRequest = friendRequest(
+                    senderUuid = player.uniqueId,
+                    receiverUuid = target.uuid
+                )
             }
         }
     }
