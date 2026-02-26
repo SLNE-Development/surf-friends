@@ -24,13 +24,13 @@ class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
     }
 
     override fun invalidatePlayer(uuid: UUID) {
-        playerCache.invalidate(uuid)
+        playerCache.remove(uuid)
     }
 
     override fun init() {}
 
     override suspend fun loadOrCreatePlayer(profile: PlayerProfile): FriendPlayer {
-        val cachedPlayer = playerCache.getIfPresent(profile.idOrThrow())
+        val cachedPlayer = players.firstOrNull { it.uuid == profile.idOrThrow() }
         if (cachedPlayer != null) {
             return cachedPlayer
         }
@@ -41,7 +41,7 @@ class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
     }
 
     override suspend fun findOrLoadPlayer(name: String): FriendPlayer? {
-        val cachedPlayer = playerCache.asMap().values.find { it.name == name }
+        val cachedPlayer = players.find { it.name == name }
         if (cachedPlayer != null) {
             return cachedPlayer
         }
