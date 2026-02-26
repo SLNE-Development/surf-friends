@@ -144,7 +144,43 @@ fun friendCommand() = commandTree("friend") {
     }
 
     literalArgument("requests") {
+        literalArgument("sent") {
+            playerExecutor { player, _ ->
+                val friendPlayer = player.friendPlayer
 
+                if (friendPlayer.sentFriendRequests.isEmpty()) {
+                    player.sendText {
+                        appendInfoPrefix()
+                        info("Du hast keine gesendeten Freundschaftsanfragen.")
+                    }
+                    return@playerExecutor
+                }
+
+                player.sendText {
+                    appendNewline()
+                    append(sendRequestsPagination.renderComponent(friendPlayer.sentFriendRequests))
+                }
+            }
+        }
+
+        literalArgument("received") {
+            playerExecutor { player, _ ->
+                val friendPlayer = player.friendPlayer
+
+                if (friendPlayer.receivedFriendRequests.isEmpty()) {
+                    player.sendText {
+                        appendInfoPrefix()
+                        info("Du hast keine empfangenen Freundschaftsanfragen.")
+                    }
+                    return@playerExecutor
+                }
+
+                player.sendText {
+                    appendNewline()
+                    append(receivedRequestsPagination.renderComponent(friendPlayer.receivedFriendRequests))
+                }
+            }
+        }
     }
 
     literalArgument("accept") {
