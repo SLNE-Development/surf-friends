@@ -14,8 +14,6 @@ interface FriendPlayerService {
     fun cachePlayer(friendPlayer: FriendPlayer)
     fun invalidatePlayer(uuid: UUID)
 
-    fun init()
-
     suspend fun loadOrCreatePlayer(profile: PlayerProfile): FriendPlayer
     suspend fun findOrLoadPlayer(name: String): FriendPlayer?
     suspend fun savePlayer(friendPlayer: FriendPlayer)

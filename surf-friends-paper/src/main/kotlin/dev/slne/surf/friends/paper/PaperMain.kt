@@ -2,6 +2,7 @@ package dev.slne.surf.friends.paper
 
 import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.core.api.common.surfCoreApi
+import dev.slne.surf.friends.core.loader.databaseLoader
 import dev.slne.surf.friends.core.loader.redisLoader
 import dev.slne.surf.friends.paper.command.friendCommand
 import dev.slne.surf.friends.paper.listener.PlayerConnectionListener
@@ -15,6 +16,8 @@ class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onLoadAsync() {
         redisLoader.load()
         redisLoader.connect()
+
+        databaseLoader.connect(plugin.dataPath)
     }
 
     override suspend fun onEnableAsync() {
@@ -26,5 +29,6 @@ class PaperMain : SuspendingJavaPlugin() {
 
     override suspend fun onDisableAsync() {
         redisLoader.disconnect()
+        databaseLoader.disconnect()
     }
 }

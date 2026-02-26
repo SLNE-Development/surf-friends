@@ -4,7 +4,7 @@ import com.destroystokyo.paper.profile.PlayerProfile
 import com.google.auto.service.AutoService
 import dev.slne.surf.friends.api.player.FriendPlayer
 import dev.slne.surf.friends.backend.repository.friendPlayerRepository
-import dev.slne.surf.friends.core.loader.redisApi
+import dev.slne.surf.friends.core.loader.redisLoader
 import dev.slne.surf.friends.core.service.FriendPlayerService
 import dev.slne.surf.surfapi.bukkit.api.command.util.idOrThrow
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -14,20 +14,16 @@ import java.util.*
 
 @AutoService(FriendPlayerService::class)
 class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
-    val playerCache = redisApi.createSyncMap<UUID, FriendPlayer>("surf-friends:player-cache")
-
     override val players: ObjectSet<FriendPlayer>
-        get() = playerCache.snapshot().values.toObjectSet()
+        get() = redisLoader.playerCache.snapshot().values.toObjectSet()
 
     override fun cachePlayer(friendPlayer: FriendPlayer) {
-        playerCache.put(friendPlayer.uuid, friendPlayer)
+        redisLoader.playerCache.put(friendPlayer.uuid, friendPlayer)
     }
 
     override fun invalidatePlayer(uuid: UUID) {
-        playerCache.remove(uuid)
+        redisLoader.playerCache.remove(uuid)
     }
-
-    override fun init() {}
 
     override suspend fun loadOrCreatePlayer(profile: PlayerProfile): FriendPlayer {
         val cachedPlayer = players.firstOrNull { it.uuid == profile.idOrThrow() }

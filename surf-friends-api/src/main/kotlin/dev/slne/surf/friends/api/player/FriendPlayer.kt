@@ -3,7 +3,6 @@ package dev.slne.surf.friends.api.player
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.api.friend.Friendship
-import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -14,9 +13,9 @@ data class FriendPlayer(
     val name: String,
     val texture: String,
 
-    val friends: ObjectSet<Friendship>,
-    val sentFriendRequests: ObjectSet<FriendRequest>,
-    val receivedFriendRequests: ObjectSet<FriendRequest>
+    val friends: Set<Friendship>,
+    val sentFriendRequests: Set<FriendRequest>,
+    val receivedFriendRequests: Set<FriendRequest>
 ) {
     fun hasFriend(uuid: UUID) =
         friends.any { it.acceptedBy == uuid } || friends.any { it.requestedBy == uuid }
