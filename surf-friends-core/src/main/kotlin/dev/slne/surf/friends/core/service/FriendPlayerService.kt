@@ -4,7 +4,6 @@ import com.destroystokyo.paper.profile.PlayerProfile
 import dev.slne.surf.friends.api.player.FriendPlayer
 import dev.slne.surf.surfapi.core.api.util.requiredService
 import it.unimi.dsi.fastutil.objects.ObjectSet
-import org.bukkit.entity.Player
 import java.util.*
 
 val friendPlayerService get() = requiredService<FriendPlayerService>()
@@ -15,6 +14,9 @@ interface FriendPlayerService {
     fun cachePlayer(friendPlayer: FriendPlayer)
     fun invalidatePlayer(uuid: UUID)
 
+    fun init()
+
     suspend fun loadOrCreatePlayer(profile: PlayerProfile): FriendPlayer
+    suspend fun findOrLoadPlayer(name: String): FriendPlayer?
     suspend fun savePlayer(friendPlayer: FriendPlayer)
 }

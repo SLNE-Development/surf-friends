@@ -26,6 +26,8 @@ class FriendShipRepository {
         FriendShipsTable.insert {
             it[requesterUuid] = friendship.requestedBy
             it[acceptorUuid] = friendship.acceptedBy
+            it[requesterName] = friendship.requesterName
+            it[acceptorName] = friendship.acceptorName
             it[createdAt] = friendship.createdAt
         }
     }
@@ -33,6 +35,8 @@ class FriendShipRepository {
     private fun createFriendShip(row: ResultRow) = Friendship(
         requestedBy = row[FriendShipsTable.requesterUuid],
         acceptedBy = row[FriendShipsTable.acceptorUuid],
+        requesterName = row[FriendShipsTable.requesterName],
+        acceptorName = row[FriendShipsTable.acceptorName],
         createdAt = row[FriendShipsTable.createdAt]
     )
 }

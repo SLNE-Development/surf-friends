@@ -1,10 +1,10 @@
 package dev.slne.surf.friends.backend.service
 
 import com.destroystokyo.paper.profile.PlayerProfile
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.auto.service.AutoService
 import dev.slne.surf.friends.api.player.FriendPlayer
 import dev.slne.surf.friends.backend.repository.friendPlayerRepository
+import dev.slne.surf.friends.core.loader.redisApi
 import dev.slne.surf.friends.core.service.FriendPlayerService
 import dev.slne.surf.surfapi.bukkit.api.command.util.idOrThrow
 import dev.slne.surf.surfapi.core.api.util.toObjectSet
@@ -14,10 +14,10 @@ import java.util.*
 
 @AutoService(FriendPlayerService::class)
 class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
-    val playerCache = Caffeine.newBuilder().build<UUID, FriendPlayer>()
+    val playerCache = redisApi.createSyncMap<UUID, FriendPlayer>("surf-friends:player-cache")
 
     override val players: ObjectSet<FriendPlayer>
-        get() = playerCache.asMap().values.toObjectSet()
+        get() = playerCache.snapshot().values.toObjectSet()
 
     override fun cachePlayer(friendPlayer: FriendPlayer) {
         playerCache.put(friendPlayer.uuid, friendPlayer)
@@ -27,6 +27,8 @@ class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
         playerCache.invalidate(uuid)
     }
 
+    override fun init() {}
+
     override suspend fun loadOrCreatePlayer(profile: PlayerProfile): FriendPlayer {
         val cachedPlayer = playerCache.getIfPresent(profile.idOrThrow())
         if (cachedPlayer != null) {
@@ -35,6 +37,18 @@ class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
 
         val loadedPlayer = friendPlayerRepository.loadOrCreatePlayer(profile)
         cachePlayer(loadedPlayer)
+        return loadedPlayer
+    }
+
+    override suspend fun findOrLoadPlayer(name: String): FriendPlayer? {
+        val cachedPlayer = playerCache.asMap().values.find { it.name == name }
+        if (cachedPlayer != null) {
+            return cachedPlayer
+        }
+
+        val loadedPlayer = friendPlayerRepository.loadPlayer(name)
+
+        loadedPlayer?.let { cachePlayer(it) }
         return loadedPlayer
     }
 

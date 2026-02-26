@@ -48,6 +48,20 @@ class FriendPlayerRepository {
         }
     }
 
+    suspend fun loadPlayer(name: String) = suspendTransaction {
+        FriendPlayerTable.selectAll().where(FriendPlayerTable.playerName eq name).firstOrNull()
+            ?.let {
+                val uuid = it[FriendPlayerTable.playerUuid]
+
+                createPlayer(
+                    row = it,
+                    sentRequests = friendRequestRepository.loadSentRequests(uuid),
+                    receivedRequests = friendRequestRepository.loadReceivedRequests(uuid),
+                    friendShips = friendShipRepository.loadFriendShips(uuid)
+                )
+            }
+    }
+
     suspend fun savePlayer(player: FriendPlayer) = suspendTransaction {
         FriendPlayerTable.insert {
             it[playerUuid] = player.uuid

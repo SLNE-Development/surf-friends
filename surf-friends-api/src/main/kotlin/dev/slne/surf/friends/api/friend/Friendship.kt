@@ -9,5 +9,9 @@ import java.util.*
 data class Friendship(
     val requestedBy: @Contextual UUID,
     val acceptedBy: @Contextual UUID,
+
+    val requesterName: String,
+    val acceptorName: String,
+
     val createdAt: SerializableOffsetDateTime
 )
