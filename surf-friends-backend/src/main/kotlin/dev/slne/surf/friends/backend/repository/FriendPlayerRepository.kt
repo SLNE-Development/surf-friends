@@ -13,6 +13,7 @@ import dev.slne.surf.friends.backend.table.FriendPlayerTable
 import dev.slne.surf.surfapi.bukkit.api.command.util.idOrThrow
 import it.unimi.dsi.fastutil.objects.ObjectSet
 import kotlinx.coroutines.flow.firstOrNull
+import java.util.*
 
 val friendPlayerRepository = FriendPlayerRepository()
 
@@ -53,6 +54,18 @@ class FriendPlayerRepository {
             ?.let {
                 val uuid = it[FriendPlayerTable.playerUuid]
 
+                createPlayer(
+                    row = it,
+                    sentRequests = friendRequestRepository.loadSentRequests(uuid),
+                    receivedRequests = friendRequestRepository.loadReceivedRequests(uuid),
+                    friendShips = friendShipRepository.loadFriendShips(uuid)
+                )
+            }
+    }
+
+    suspend fun loadPlayer(uuid: UUID) = suspendTransaction {
+        FriendPlayerTable.selectAll().where(FriendPlayerTable.playerUuid eq uuid).firstOrNull()
+            ?.let {
                 createPlayer(
                     row = it,
                     sentRequests = friendRequestRepository.loadSentRequests(uuid),

@@ -10,6 +10,7 @@ import dev.slne.surf.friends.core.loader.redisApi
 import dev.slne.surf.friends.core.service.friendRequestService
 import dev.slne.surf.friends.core.service.friendShipService
 import dev.slne.surf.friends.paper.redis.event.FriendNotifyRedisEvent
+import dev.slne.surf.friends.paper.redis.event.FriendRequestNotifyRedisEvent
 import dev.slne.surf.friends.paper.util.friendPlayer
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
 import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
@@ -79,7 +80,7 @@ suspend fun addFriend(player: Player, target: SurfPlayer?, rawTarget: String) {
     }
 
     redisApi.publishEvent(
-        FriendNotifyRedisEvent(
+        FriendRequestNotifyRedisEvent(
             playerUuid = target.uuid,
             buildText {
                 appendInfoPrefix()

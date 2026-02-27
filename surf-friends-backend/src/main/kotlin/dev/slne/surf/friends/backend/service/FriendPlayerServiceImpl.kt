@@ -48,6 +48,17 @@ class FriendPlayerServiceImpl : FriendPlayerService, Services.Fallback {
         return loadedPlayer
     }
 
+    override suspend fun findOrLoadPlayer(uuid: UUID): FriendPlayer? {
+        val cachedPlayer = players.firstOrNull { it.uuid == uuid }
+        if (cachedPlayer != null) {
+            return cachedPlayer
+        }
+
+        val loadedPlayer = friendPlayerRepository.loadPlayer(uuid)
+        loadedPlayer?.let { cachePlayer(it) }
+        return loadedPlayer
+    }
+
     override suspend fun savePlayer(friendPlayer: FriendPlayer) {
         friendPlayerRepository.savePlayer(friendPlayer)
     }

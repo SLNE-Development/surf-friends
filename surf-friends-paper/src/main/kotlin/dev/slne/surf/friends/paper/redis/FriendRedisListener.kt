@@ -2,6 +2,7 @@ package dev.slne.surf.friends.paper.redis
 
 import dev.slne.surf.friends.paper.hook.SettingsHook
 import dev.slne.surf.friends.paper.redis.event.FriendNotifyRedisEvent
+import dev.slne.surf.friends.paper.redis.event.FriendRequestNotifyRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import org.bukkit.Bukkit
@@ -21,7 +22,7 @@ object FriendRedisListener {
     }
 
     @OnRedisEvent
-    fun onFriendRequestNotify(event: FriendNotifyRedisEvent) {
+    fun onFriendRequestNotify(event: FriendRequestNotifyRedisEvent) {
         val player = Bukkit.getPlayer(event.playerUuid) ?: return
 
         if (!SettingsHook.hasFriendRequestsEnabled(player.uniqueId)) {

@@ -16,5 +16,6 @@ interface FriendPlayerService {
 
     suspend fun loadOrCreatePlayer(profile: PlayerProfile): FriendPlayer
     suspend fun findOrLoadPlayer(name: String): FriendPlayer?
+    suspend fun findOrLoadPlayer(uuid: UUID): FriendPlayer?
     suspend fun savePlayer(friendPlayer: FriendPlayer)
 }
