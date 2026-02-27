@@ -1,6 +1,7 @@
 package dev.slne.surf.friends.paper.command
 
 import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.api.friend.Friendship
 import dev.slne.surf.friends.api.friend.friendRequest
@@ -156,7 +157,12 @@ fun listFriends(player: Player) {
 
     player.sendText {
         appendNewline()
-        append(friendPagination(player.uniqueId).renderComponent(friendPlayer.friends))
+        append(
+            friendPagination(player.uniqueId).renderComponent(
+                friendPlayer.friends
+                    .sortedBy { it.getOtherUuid(player.uniqueId).currentServerName() != null }
+                    .sortedBy { it.getOtherName(player.uniqueId) })
+        )
     }
 }
 
@@ -168,8 +174,18 @@ private fun friendPagination(ownUuid: UUID) = Pagination<Friendship> {
             spacer("-")
             appendSpace()
             variableValue(friendship.getOtherName(ownUuid))
-
-            // TODO: Display if online, if yes: where
+            appendSpace()
+            spacer("(")
+            friendship.getOtherUuid(ownUuid).currentServerName().let {
+                if (it != null) {
+                    success("Online auf $it")
+                } else {
+                    error("Offline")
+                }
+            }
+            spacer(")")
         })
     }
 }
+
+fun UUID.currentServerName() = surfCoreApi.getPlayer(this)?.currentServer?.displayName

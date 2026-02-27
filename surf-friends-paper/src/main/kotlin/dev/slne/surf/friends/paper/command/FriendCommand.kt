@@ -25,6 +25,26 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
 
+fun friendListCommand() = commandTree("fl") {
+    withPermission(PermissionRegistry.PREFIX_COMMAND)
+
+    playerExecutor { player, _ ->
+        listFriends(player)
+    }
+}
+
+fun friendAddCommand() = commandTree("fa") {
+    withPermission(PermissionRegistry.PREFIX_COMMAND)
+
+    nonFriendOfflinePlayerArgument("target") {
+        playerExecutorSuspend { player, args ->
+            val target = args.awaiting<SurfPlayer?>("target")
+
+            addFriend(player, target, args.getRaw("target") ?: "#Unknown")
+        }
+    }
+}
+
 fun friendCommand() = commandTree("friend") {
     withPermission(PermissionRegistry.PREFIX_COMMAND)
 

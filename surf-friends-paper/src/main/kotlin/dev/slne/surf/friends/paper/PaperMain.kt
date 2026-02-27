@@ -4,7 +4,9 @@ import com.github.shynixn.mccoroutine.folia.SuspendingJavaPlugin
 import dev.slne.surf.core.api.common.surfCoreApi
 import dev.slne.surf.friends.core.loader.databaseLoader
 import dev.slne.surf.friends.core.loader.redisLoader
+import dev.slne.surf.friends.paper.command.friendAddCommand
 import dev.slne.surf.friends.paper.command.friendCommand
+import dev.slne.surf.friends.paper.command.friendListCommand
 import dev.slne.surf.friends.paper.listener.PlayerConnectionListener
 import dev.slne.surf.friends.paper.listener.SurfPlayerListener
 import dev.slne.surf.friends.paper.redis.FriendRedisListener
@@ -27,6 +29,8 @@ class PaperMain : SuspendingJavaPlugin() {
         surfCoreApi.registerListener(SurfPlayerListener)
 
         friendCommand()
+        friendAddCommand()
+        friendListCommand()
     }
 
     override suspend fun onDisableAsync() {
