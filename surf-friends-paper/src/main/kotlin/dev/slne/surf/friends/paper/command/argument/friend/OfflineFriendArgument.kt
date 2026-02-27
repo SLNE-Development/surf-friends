@@ -23,7 +23,11 @@ class OfflineFriendArgument(nodeName: String) :
     init {
         this.replaceSuggestions(
             ArgumentSuggestions.stringCollection { info ->
-                friendPlayerService.players.find { it.uuid == info.sender.uuid() }?.friends?.map { it.acceptorName }
+                friendPlayerService.players.find { it.uuid == info.sender.uuid() }?.friends?.map {
+                    it.getOtherName(
+                        info.sender.uuid()
+                    )
+                }
             }
         )
     }
