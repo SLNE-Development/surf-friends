@@ -13,7 +13,7 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.uuid
 
 class FriendPlayerArgument(nodeName: String) :
     CustomArgument<FriendPlayer, String>(StringArgument(nodeName), { info ->
-        friendPlayerService.players.firstOrNull { it.name == info.input } // TODO: Only allow real friends, not every online friend player
+        friendPlayerService.players.firstOrNull { it.name == info.input }
             ?: throw CustomArgumentException.fromAdventureComponent(
                 buildText {
                     appendErrorPrefix()
@@ -23,7 +23,11 @@ class FriendPlayerArgument(nodeName: String) :
     init {
         this.replaceSuggestions(
             ArgumentSuggestions.stringCollection { sender ->
-                friendPlayerService.players.find { it.uuid == sender.sender.uuid() }?.friends?.map { it.acceptorName }
+                friendPlayerService.players.find { it.uuid == sender.sender.uuid() }?.friends?.map {
+                    it.getOtherName(
+                        sender.sender.uuid()
+                    )
+                }
             }
         )
     }
