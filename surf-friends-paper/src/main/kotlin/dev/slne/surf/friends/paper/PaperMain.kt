@@ -7,6 +7,7 @@ import dev.slne.surf.friends.core.loader.redisLoader
 import dev.slne.surf.friends.paper.command.friendCommand
 import dev.slne.surf.friends.paper.listener.PlayerConnectionListener
 import dev.slne.surf.friends.paper.listener.SurfPlayerListener
+import dev.slne.surf.friends.paper.redis.FriendRedisListener
 import dev.slne.surf.surfapi.bukkit.api.event.register
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -15,6 +16,7 @@ val plugin get() = JavaPlugin.getPlugin(PaperMain::class.java)
 class PaperMain : SuspendingJavaPlugin() {
     override suspend fun onLoadAsync() {
         redisLoader.load()
+        redisLoader.withListener(FriendRedisListener)
         redisLoader.connect()
 
         databaseLoader.connect(plugin.dataPath)

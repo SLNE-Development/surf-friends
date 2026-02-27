@@ -5,18 +5,17 @@ import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.literalArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.core.api.common.player.SurfPlayer
-import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.friends.api.friend.FriendRequest
-import dev.slne.surf.friends.api.friend.Friendship
-import dev.slne.surf.friends.api.friend.friendRequest
-import dev.slne.surf.friends.api.friend.friendship
 import dev.slne.surf.friends.api.player.FriendPlayer
+import dev.slne.surf.friends.core.loader.redisApi
 import dev.slne.surf.friends.core.service.friendRequestService
 import dev.slne.surf.friends.core.service.friendShipService
+import dev.slne.surf.friends.paper.command.argument.friend.nonFriendOfflinePlayerArgument
 import dev.slne.surf.friends.paper.command.argument.friend.offlineFriendArgument
 import dev.slne.surf.friends.paper.command.argument.request.receivedFriendRequestArgument
 import dev.slne.surf.friends.paper.command.argument.request.sentFriendRequestArgument
 import dev.slne.surf.friends.paper.permission.PermissionRegistry
+import dev.slne.surf.friends.paper.redis.event.FriendNotifyRedisEvent
 import dev.slne.surf.friends.paper.util.friendPlayer
 import dev.slne.surf.surfapi.bukkit.api.command.executors.playerExecutorSuspend
 import dev.slne.surf.surfapi.core.api.command.args.awaiting
@@ -25,73 +24,16 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
 import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import net.kyori.adventure.text.format.TextDecoration
-import java.util.*
 
 fun friendCommand() = commandTree("friend") {
     withPermission(PermissionRegistry.PREFIX_COMMAND)
 
     literalArgument("add") {
-        surfOfflinePlayerArgument("target") { // TODO: Exclude self and online friends
+        nonFriendOfflinePlayerArgument("target") {
             playerExecutorSuspend { player, args ->
                 val target = args.awaiting<SurfPlayer?>("target")
 
-                if (target == null) {
-                    player.sendText {
-                        appendErrorPrefix()
-                        error("Der Spieler wurde nicht gefunden.")
-                    }
-                    return@playerExecutorSuspend
-                }
-
-                if (target.uuid == player.uniqueId) {
-                    player.sendText {
-                        appendErrorPrefix()
-                        error("Du kannst dich nicht selbst als Freund hinzufügen.")
-                    }
-                    return@playerExecutorSuspend
-                }
-
-                val friendPlayer = player.friendPlayer
-
-                if (friendPlayer.hasSentFriendRequest(target.uuid)) {
-                    player.sendText {
-                        appendErrorPrefix()
-                        error("Du hast diesem Spieler bereits eine Freundschaftsanfrage gesendet.")
-                    }
-                    return@playerExecutorSuspend
-                }
-
-                if (friendPlayer.hasFriend(target.uuid)) {
-                    player.sendText {
-                        appendErrorPrefix()
-                        error("Du bist bereits mit diesem Spieler befreundet.")
-                    }
-                    return@playerExecutorSuspend
-                }
-
-                if (friendPlayer.hasReceivedFriendRequest(target.uuid)) {
-                    // TODO: Accept request
-                    return@playerExecutorSuspend
-                }
-
-                val friendRequest = friendRequest(
-                    senderUuid = player.uniqueId,
-                    receiverUuid = target.uuid,
-                    senderName = player.name,
-                    receiverName = target.lastKnownName ?: args.getRaw("target")
-                    ?: error("Player has no name and argument has no raw!")
-                )
-
-                friendRequestService.saveFriendRequest(friendRequest)
-
-                player.sendText {
-                    appendSuccessPrefix()
-                    success("Du hast eine Freundschaftsanfrage an ")
-                    variableValue(target.lastKnownName ?: args.getRaw("target") ?: "#Unbekannt")
-                    success(" gesendet.")
-                }
-
-                // TODO: Notify target if online and if settings allow it
+                addFriend(player, target, args.getRaw("target") ?: "#Unknown")
             }
         }
     }
@@ -139,27 +81,23 @@ fun friendCommand() = commandTree("friend") {
                     success(" beendet.")
                 }
 
-                // TODO: Notify old friend if online and if settings allow it
+                redisApi.publishEvent(
+                    FriendNotifyRedisEvent(
+                        playerUuid = friend.uuid,
+                        buildText {
+                            appendInfoPrefix()
+                            info("Die Freundschaft mit ")
+                            variableValue(player.name)
+                            info(" wurde beendet.")
+                        }
+                    ))
             }
         }
     }
 
     literalArgument("list") {
         playerExecutor { player, _ ->
-            val friendPlayer = player.friendPlayer
-
-            if (friendPlayer.friends.isEmpty()) {
-                player.sendText {
-                    appendInfoPrefix()
-                    info("Du hast keine Freunde.")
-                }
-                return@playerExecutor
-            }
-
-            player.sendText {
-                appendNewline()
-                append(friendPagination(player.uniqueId).renderComponent(friendPlayer.friends))
-            }
+            listFriends(player)
         }
     }
 
@@ -207,34 +145,7 @@ fun friendCommand() = commandTree("friend") {
         receivedFriendRequestArgument("receivedRequest") {
             playerExecutorSuspend { player, args ->
                 val receivedRequest: FriendRequest by args
-                val friendPlayer = player.friendPlayer
-
-                if (friendPlayer.hasFriend(receivedRequest.senderUuid)) {
-                    player.sendText {
-                        appendErrorPrefix()
-                        error("Du bist bereits mit diesem Spieler befreundet.")
-                    }
-                    return@playerExecutorSuspend
-                }
-
-                val friendship = friendship(
-                    requestedBy = receivedRequest.senderUuid,
-                    acceptedBy = receivedRequest.receiverUuid,
-                    requesterName = receivedRequest.senderName,
-                    acceptorName = receivedRequest.receiverName
-                )
-
-                friendRequestService.deleteFriendRequest(receivedRequest)
-                friendShipService.saveFriendShip(friendship)
-
-                player.sendText {
-                    appendSuccessPrefix()
-                    success("Du hast die Freundschaftsanfrage von ")
-                    variableValue(receivedRequest.senderName)
-                    success(" angenommen.")
-                }
-
-                // TODO: Notify sender if online and if settings allow it
+                acceptFriend(player, receivedRequest)
             }
         }
     }
@@ -253,7 +164,16 @@ fun friendCommand() = commandTree("friend") {
                     success(" abgelehnt.")
                 }
 
-                // TODO: Notify sender if online and if settings allow it
+                redisApi.publishEvent(
+                    FriendNotifyRedisEvent(
+                        playerUuid = receivedRequest.senderUuid,
+                        buildText {
+                            appendInfoPrefix()
+                            info("Deine Freundschaftsanfrage an ")
+                            variableValue(receivedRequest.receiverName)
+                            info(" wurde abgelehnt.")
+                        }
+                    ))
             }
         }
     }
@@ -272,23 +192,18 @@ fun friendCommand() = commandTree("friend") {
                     success(" zurückgezogen.")
                 }
 
-                // TODO: Notify receiver if online and if settings allow it
+                redisApi.publishEvent(
+                    FriendNotifyRedisEvent(
+                        playerUuid = sentRequest.receiverUuid,
+                        buildText {
+                            appendInfoPrefix()
+                            info("Die Freundschaftsanfrage von ")
+                            variableValue(player.name)
+                            info(" wurde zurückgezogen.")
+                        }
+                    ))
             }
         }
-    }
-}
-
-private fun friendPagination(ownUuid: UUID) = Pagination<Friendship> {
-    title { primary("Deine Freunde".toSmallCaps(), TextDecoration.BOLD) }
-
-    rowRenderer { friendship, _ ->
-        listOf(buildText {
-            spacer("-")
-            appendSpace()
-            variableValue(friendship.getOtherName(ownUuid))
-
-            // TODO: Display if online, if yes: where
-        })
     }
 }
 
