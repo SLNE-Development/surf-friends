@@ -13,7 +13,13 @@ import dev.slne.surf.surfapi.core.api.messages.adventure.uuid
 
 class SentFriendRequestArgument(nodeName: String) :
     CustomArgument<FriendRequest, String>(StringArgument(nodeName), { info ->
-        val senderPlayer = friendPlayerService.players.first { it.uuid == info.sender.uuid() }
+        val senderPlayer =
+            friendPlayerService.players.firstOrNull { it.uuid == info.sender.uuid() }
+                ?: throw CustomArgumentException.fromAdventureComponent(
+                    buildText {
+                        appendErrorPrefix()
+                        error("Dein Spielerprofil konnte nicht gefunden werden.")
+                    })
 
         senderPlayer.sentFriendRequests.firstOrNull { it.receiverName == info.input }
             ?: throw CustomArgumentException.fromAdventureComponent(
