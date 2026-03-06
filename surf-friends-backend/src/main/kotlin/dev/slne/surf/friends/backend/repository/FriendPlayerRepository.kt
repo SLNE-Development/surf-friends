@@ -6,6 +6,7 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.insert
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.selectAll
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
+import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.upsert
 import dev.slne.surf.friends.api.friend.FriendRequest
 import dev.slne.surf.friends.api.friend.Friendship
 import dev.slne.surf.friends.api.player.FriendPlayer
@@ -76,7 +77,7 @@ class FriendPlayerRepository {
     }
 
     suspend fun savePlayer(player: FriendPlayer) = suspendTransaction {
-        FriendPlayerTable.insert {
+        FriendPlayerTable.upsert {
             it[playerUuid] = player.uuid
             it[playerName] = player.name
             it[texture] = player.texture
