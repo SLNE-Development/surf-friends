@@ -19,9 +19,9 @@ object SettingsHook {
     fun hasFriendNotifyEnabled(playerUuid: UUID): Boolean {
         return if (isEnabled()) {
             surfSettingsApi.getPlayerSetting(playerUuid, "friend_notify")?.getBoolean()
-                ?: false
+                ?: true
         } else {
-            false
+            true
         }
     }
 }
