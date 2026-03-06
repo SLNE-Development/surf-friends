@@ -161,7 +161,9 @@ fun listFriends(player: Player) {
         append(
             friendPagination(player.uniqueId).renderComponent(
                 friendPlayer.friends
-                    .sortedBy { it.getOtherUuid(player.uniqueId).currentServerName() != null }
+                    .sortedByDescending {
+                        it.getOtherUuid(player.uniqueId).currentServerName() != null
+                    }
                     .sortedBy { it.getOtherName(player.uniqueId) })
         )
     }
