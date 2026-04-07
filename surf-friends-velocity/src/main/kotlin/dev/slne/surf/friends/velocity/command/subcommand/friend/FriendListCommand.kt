@@ -4,19 +4,50 @@ import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.integerArgument
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.api.core.messages.CommonComponents
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.pagination.Pagination
+import dev.slne.surf.friends.api.model.Friendship
 import dev.slne.surf.friends.core.service.friendService
 import dev.slne.surf.friends.velocity.container
 import dev.slne.surf.friends.velocity.util.*
 import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.CommonComponents
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
 import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
-import dev.slne.surf.surfapi.core.api.messages.adventure.sendText
-import dev.slne.surf.surfapi.core.api.messages.pagination.Pagination
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import net.kyori.adventure.text.format.TextDecoration
 import kotlin.jvm.optionals.getOrNull
+
+private val pagination = Pagination<Friendship> {
+    title {
+        primary("Freundesliste")
+    }
+
+    rowRenderer { friendship, i ->
+        listOf(buildText {
+            append(CommonComponents.EM_DASH)
+            appendSpace()
+            appendAsync {
+                append()
+            }
+            appendSpace()
+            if (row.isOnline) {
+                appendSpace()
+                success("(Online auf ${row.onlineServer})")
+            } else {
+                appendSpace()
+                error("(Offline)")
+            }
+            hoverEvent(buildText {
+                info("Klicke hier, um ")
+                variableValue(row.friendName)
+                info(" hinterher zuspringen.")
+            })
+            clickRunsCommand("/friend jump ${row.friendName}")
+        })
+    }
+}
 
 class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
@@ -55,23 +86,7 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
                     rowRenderer { row, _ ->
                         listOf(
                             buildText {
-                                append(CommonComponents.EM_DASH)
-                                appendSpace()
-                                variableKey(row.friendName)
-                                appendSpace()
-                                if (row.isOnline) {
-                                    appendSpace()
-                                    success("(Online auf ${row.onlineServer})")
-                                } else {
-                                    appendSpace()
-                                    error("(Offline)")
-                                }
-                                hoverEvent(buildText {
-                                    info("Klicke hier, um ")
-                                    variableValue(row.friendName)
-                                    info(" hinterher zuspringen.")
-                                })
-                                clickRunsCommand("/friend jump ${row.friendName}")
+
                             }
                         )
                     }

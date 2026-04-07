@@ -1,8 +1,4 @@
-import dev.slne.surf.surfapi.gradle.util.slneReleases
-
-plugins {
-    `maven-publish`
-}
+import dev.slne.surf.api.gradle.util.slneReleases
 
 allprojects {
     group = "dev.slne.surf.friends"
@@ -12,20 +8,19 @@ allprojects {
 buildscript {
     repositories {
         gradlePluginPortal()
-        maven("https://repo.slne.dev/repository/maven-public/") { name = "maven-public" }
+        maven("https://reposilite.slne.dev/public/") { name = "public" }
     }
     dependencies {
-        classpath("dev.slne.surf:surf-api-gradle-plugin:1.21.11+")
+        classpath("dev.slne.surf.api:surf-api-gradle-plugin:+")
+        classpath("dev.slne.surf.microservice:surf-microservice-gradle-plugin:+")
     }
 }
 
 subprojects {
     afterEvaluate {
-        plugins.withType<PublishingPlugin> {
-            configure<PublishingExtension> {
-                repositories {
-                    slneReleases()
-                }
+        extensions.findByType<PublishingExtension>()?.apply {
+            repositories {
+                slneReleases()
             }
         }
     }

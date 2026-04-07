@@ -4,64 +4,68 @@ import com.github.shynixn.mccoroutine.velocity.launch
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
-import dev.slne.surf.friends.core.service.databaseService
-import dev.slne.surf.friends.core.service.friendService
+import dev.slne.surf.api.core.font.toSmallCaps
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.friends.api.player.FriendsPlayer
+import dev.slne.surf.friends.api.utils.displayName
 import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.velocity.util.getOnlineFriends
-import dev.slne.surf.friends.velocity.util.sendText
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.adventure.buildText
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
+import dev.slne.surf.friends.velocity.server
+import kotlin.jvm.optionals.getOrNull
 
 class ConnectionListener {
     @Subscribe
     fun onConnect(event: PlayerChooseInitialServerEvent) {
         val player = event.player
+        val friendPlayer = FriendsPlayer[player.uniqueId]
 
-        container.launch {
-            val friendRequests = friendService.getReceivedFriendRequests(player.uniqueId)
-            val onlineFriends = friendService.getOnlineFriends(player.uniqueId)
+        val friendRequests = friendPlayer.receivedFriendRequests
+        val onlineFriends = friendPlayer.onlineFriendUuids.mapNotNull {
+            server.getPlayer(it).getOrNull()
+        }
 
-            if (onlineFriends.isNotEmpty()) {
-                player.uniqueId.sendText {
-                    info("Aktuell sind ")
-                    variableValue(onlineFriends.size)
-                    info(" deiner Freunde online. ")
+        if (onlineFriends.isNotEmpty()) {
+            player.sendText {
+                info("Aktuell sind ")
+                variableValue(onlineFriends.size)
+                info(" deiner Freunde online. ")
 
-                    append {
-                        clickRunsCommand("/friend list")
-                        info("[Ansehen]".toSmallCaps())
-                        hoverEvent(buildText {
-                            info("Klicke hier, um die Freunde anzusehen.")
-                        })
-                    }
+                append {
+                    clickRunsCommand("/friend list")
+                    info("[Ansehen]".toSmallCaps())
+                    hoverEvent(buildText {
+                        info("Klicke hier, um deine Freunde anzusehen.")
+                    })
                 }
+            }
 
-                onlineFriends.forEach {
-                    val playerSettings = databaseService.getFriendSettings(it)
+            container.launch {
+                onlineFriends.forEach { onlineFriend ->
+                    val onlineFriendPlayer = FriendsPlayer[onlineFriend.uniqueId]
 
-                    if (playerSettings.announcementsEnabled) {
-                        it.sendText {
-                            variableValue(player.username)
+                    if (onlineFriendPlayer.notificationsEnabled) {
+                        onlineFriend.sendText {
+                            append(friendPlayer.surfPlayer().displayName())
                             info(" ist nun online.")
                         }
                     }
                 }
             }
+        }
 
-            if (friendRequests.isNotEmpty()) {
-                player.uniqueId.sendText {
-                    info("Du hast noch ")
-                    variableValue(friendRequests.size)
-                    info(" Freundschaftsanfragen offen. ")
+        if (friendRequests.isNotEmpty()) {
+            player.sendText {
+                info("Du hast noch ")
+                variableValue(friendRequests.size)
+                info(" Freundschaftsanfragen offen. ")
 
-                    append {
-                        clickRunsCommand("/friend requests")
-                        info("[Ansehen]".toSmallCaps())
-                        hoverEvent(buildText {
-                            info("Klicke hier, um die Freundschaftsanfragen anzusehen.")
-                        })
-                    }
+                append {
+                    clickRunsCommand("/friend requests")
+                    info("[Ansehen]".toSmallCaps())
+                    hoverEvent(buildText {
+                        info("Klicke hier, um deine Freundschaftsanfragen anzusehen.")
+                    })
                 }
             }
         }
@@ -74,16 +78,20 @@ class ConnectionListener {
         }
 
         val player = event.player
+        val friendsPlayer = FriendsPlayer[player.uniqueId]
 
         container.launch {
-            val onlineFriends = friendService.getOnlineFriends(player.uniqueId)
+            val onlineFriends = friendsPlayer.onlineFriendUuids.mapNotNull {
+                server.getPlayer(it).getOrNull()
+            }
 
-            onlineFriends.forEach {
-                val playerSettings = databaseService.getFriendSettings(it)
+            onlineFriends.forEach { onlineFriend ->
+                val onlineFriendPlayer = FriendsPlayer[onlineFriend.uniqueId]
 
-                if (playerSettings.announcementsEnabled) {
-                    it.sendText {
-                        variableValue(player.username)
+                if (onlineFriendPlayer.notificationsEnabled) {
+                    onlineFriend.sendText {
+                        appendInfoPrefix()
+                        append(friendsPlayer.surfPlayer().displayName())
                         info(" ist nun offline.")
                     }
                 }

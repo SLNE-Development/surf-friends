@@ -1,0 +1,11 @@
+package dev.slne.surf.friends.core.common.packets.friendrequest
+
+import dev.slne.surf.friends.api.result.FriendRequestCreateResult
+import dev.slne.surf.rabbitmq.api.packet.RabbitResponsePacket
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CreateFriendRequestResponsePacket(
+    val result: FriendRequestCreateResult
+) : RabbitResponsePacket() {
+}

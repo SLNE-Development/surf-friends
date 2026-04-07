@@ -5,13 +5,14 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="C:\Gradle\gradle-8.13" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/surf-friends-api" />
             <option value="$PROJECT_DIR$/surf-friends-core" />
-            <option value="$PROJECT_DIR$/surf-friends-fallback" />
+            <option value="$PROJECT_DIR$/surf-friends-core/surf-friends-core-client" />
+            <option value="$PROJECT_DIR$/surf-friends-core/surf-friends-core-common" />
+            <option value="$PROJECT_DIR$/surf-friends-microservice" />
             <option value="$PROJECT_DIR$/surf-friends-velocity" />
           </set>
         </option>

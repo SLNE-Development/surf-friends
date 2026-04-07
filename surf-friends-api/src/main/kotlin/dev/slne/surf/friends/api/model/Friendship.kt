@@ -1,23 +1,16 @@
 package dev.slne.surf.friends.api.model
 
-import java.util.UUID
+import dev.slne.surf.api.core.serializer.java.datetime.datetime.offset.SerializableOffsetDateTime
+import dev.slne.surf.api.core.serializer.java.uuid.SerializableUUID
+import dev.slne.surf.friends.api.player.FriendsPlayer
+import kotlinx.serialization.Serializable
 
-/**
- * Represents a friendship between two users.
- */
-interface Friendship {
-    /**
-     * The UUID of the user who is part of the friendship.
-     */
-    val userUuid: UUID
-
-    /**
-     * The UUID of the friend in the friendship.
-     */
-    val friendUuid: UUID
-
-    /**
-     * The timestamp (in milliseconds since epoch) when the friendship was created.
-     */
-    val createdAt: Long
+@Serializable
+data class Friendship(
+    val senderUuid: SerializableUUID,
+    val targetUuid: SerializableUUID,
+    val createdAt: SerializableOffsetDateTime
+) {
+    val sender = FriendsPlayer[senderUuid]
+    val target = FriendsPlayer[targetUuid]
 }
