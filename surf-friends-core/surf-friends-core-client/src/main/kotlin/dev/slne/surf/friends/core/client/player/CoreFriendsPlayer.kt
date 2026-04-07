@@ -48,12 +48,12 @@ class CoreFriendsPlayer(
 
     override val friendships: @UnmodifiableView ObjectSet<Friendship>
         get() = FriendsClientInstance.INSTANCE.friendships.snapshot().filter {
-            it.senderUuid == uuid
+            it.playerUuid == uuid
         }.toObjectSet()
 
     override val onlineFriendUuids: @UnmodifiableView ObjectSet<UUID>
         get() = friendships.mapNotNull {
-            SurfCoreApi.getPlayer(it.targetUuid)?.uuid
+            SurfCoreApi.getPlayer(it.friendUuid)?.uuid
         }.toObjectSet()
 
     override fun hasReceivedFriendRequest(target: FriendsPlayer): Boolean {
@@ -69,7 +69,7 @@ class CoreFriendsPlayer(
     }
 
     override fun findFriendship(target: FriendsPlayer): Friendship? {
-        return friendships.firstOrNull { it.targetUuid == target.uuid }
+        return friendships.firstOrNull { it.friendUuid == target.uuid }
     }
 
     override suspend fun sendFriendRequest(target: FriendsPlayer): FriendRequestCreateResult {
@@ -115,7 +115,7 @@ class CoreFriendsPlayer(
         val result = rabbitApi.sendRequest(
             RevokeFriendRequestRequestPacket(
                 senderUuid = uuid,
-                receiverUuid = target.uuid
+                targetUuid = target.uuid
             )
         ).result
 
@@ -161,16 +161,16 @@ class CoreFriendsPlayer(
 
         FriendsClientInstance.INSTANCE.friendships.add(
             Friendship(
-                senderUuid = uuid,
-                targetUuid = target.uuid,
+                playerUuid = uuid,
+                friendUuid = target.uuid,
                 createdAt = now
             )
         )
 
         FriendsClientInstance.INSTANCE.friendships.add(
             Friendship(
-                senderUuid = target.uuid,
-                targetUuid = uuid,
+                playerUuid = target.uuid,
+                friendUuid = uuid,
                 createdAt = now
             )
         )
@@ -237,8 +237,8 @@ class CoreFriendsPlayer(
         )
 
         FriendsClientInstance.INSTANCE.friendships.removeIf {
-            (it.senderUuid == uuid && it.targetUuid == target.uuid) ||
-                    (it.senderUuid == target.uuid && it.targetUuid == uuid)
+            (it.playerUuid == uuid && it.friendUuid == target.uuid) ||
+                    (it.playerUuid == target.uuid && it.friendUuid == uuid)
         }
 
         return result

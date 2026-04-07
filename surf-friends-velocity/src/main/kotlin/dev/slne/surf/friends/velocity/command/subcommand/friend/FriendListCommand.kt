@@ -64,15 +64,13 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
             container.launch {
                 val friendEntries = friendList
                     .map {
-                        it to it.targetUuid.toSurfPlayer()
+                        it to it.friendUuid.toSurfPlayer()
                     }
                     .sortedByDescending { (_, surfPlayer) ->
                         surfPlayer?.isOnline() ?: false
                     }.mapNotNull { (friendship, surfPlayer) ->
-                        val friendUuid = friendship.targetUuid
-
                         LocalFriendEntry(
-                            friendName = PlayerLookupService.getUsername(friendUuid)
+                            friendName = PlayerLookupService.getUsername(friendship.friendUuid)
                                 ?: return@mapNotNull null,
                             friendDisplayName = surfPlayer.displayName(),
                             isOnline = surfPlayer?.isOnline() ?: false,

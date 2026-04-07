@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RevokeFriendRequestRequestPacket(
     val senderUuid: SerializableUUID,
-    val receiverUuid: SerializableUUID,
+    val targetUuid: SerializableUUID,
 ) : RabbitRequestPacket<RevokeFriendRequestResponsePacket>()

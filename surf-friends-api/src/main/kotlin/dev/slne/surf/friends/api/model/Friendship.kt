@@ -7,10 +7,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Friendship(
-    val senderUuid: SerializableUUID,
-    val targetUuid: SerializableUUID,
+    val playerUuid: SerializableUUID,
+    val friendUuid: SerializableUUID,
     val createdAt: SerializableOffsetDateTime
 ) {
-    val sender get() = FriendsPlayer[senderUuid]
-    val target get() = FriendsPlayer[targetUuid]
+    val player get() = FriendsPlayer[playerUuid]
+    val friend get() = FriendsPlayer[friendUuid]
 }

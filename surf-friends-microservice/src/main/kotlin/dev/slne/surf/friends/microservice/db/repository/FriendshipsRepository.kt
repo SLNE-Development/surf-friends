@@ -19,8 +19,8 @@ object FriendshipsRepository {
         FriendshipsTable.selectAll()
             .map {
                 Friendship(
-                    senderUuid = it[FriendshipsTable.senderUuid],
-                    targetUuid = it[FriendshipsTable.targetUuid],
+                    playerUuid = it[FriendshipsTable.playerUuid],
+                    friendUuid = it[FriendshipsTable.friendUuid],
                     createdAt = it[FriendshipsTable.createdAt],
                 )
             }
@@ -28,19 +28,19 @@ object FriendshipsRepository {
     }
 
     suspend fun createFriendship(
-        senderUuid: UUID,
-        targetUuid: UUID,
+        playerA: UUID,
+        playerB: UUID,
         createdAt: OffsetDateTime
     ) = suspendTransaction {
         FriendshipsTable.insert {
-            it[this.senderUuid] = senderUuid
-            it[this.targetUuid] = targetUuid
+            it[playerUuid] = playerA
+            it[friendUuid] = playerB
             it[this.createdAt] = createdAt
         }
 
         FriendshipsTable.insert {
-            it[this.senderUuid] = targetUuid
-            it[this.targetUuid] = senderUuid
+            it[playerUuid] = playerB
+            it[friendUuid] = playerA
             it[this.createdAt] = createdAt
         }
 
@@ -48,14 +48,14 @@ object FriendshipsRepository {
     }
 
     suspend fun deleteFriendship(
-        senderUuid: UUID,
-        targetUuid: UUID
+        playerA: UUID,
+        playerB: UUID
     ) = suspendTransaction {
         FriendshipsTable.deleteWhere {
-            ((FriendshipsTable.senderUuid eq senderUuid) and
-                    (FriendshipsTable.targetUuid eq targetUuid)) or
-                    ((FriendshipsTable.senderUuid eq targetUuid) and
-                            (FriendshipsTable.targetUuid eq senderUuid))
+            ((FriendshipsTable.playerUuid eq playerA) and
+                    (FriendshipsTable.friendUuid eq playerB)) or
+                    ((FriendshipsTable.playerUuid eq playerB) and
+                            (FriendshipsTable.friendUuid eq playerA))
         }
 
         Unit

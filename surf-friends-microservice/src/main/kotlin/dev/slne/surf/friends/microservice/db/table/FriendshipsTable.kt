@@ -5,7 +5,11 @@ import dev.slne.surf.database.columns.time.offsetDateTime
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 
 object FriendshipsTable : LongIdTable("friendships") {
-    val senderUuid = nativeUuid("sender_uuid")
-    val targetUuid = nativeUuid("target_uuid")
+    val playerUuid = nativeUuid("player_uuid")
+    val friendUuid = nativeUuid("friend_uuid")
     val createdAt = offsetDateTime("created_at")
+
+    init {
+        uniqueIndex(playerUuid, friendUuid)
+    }
 }

@@ -8,4 +8,8 @@ object FriendRequestsTable : LongIdTable("friend_requests") {
     val senderUuid = nativeUuid("sender_uuid")
     val targetUuid = nativeUuid("target_uuid")
     val createdAt = offsetDateTime("created_at")
+
+    init {
+        uniqueIndex(senderUuid, targetUuid)
+    }
 }

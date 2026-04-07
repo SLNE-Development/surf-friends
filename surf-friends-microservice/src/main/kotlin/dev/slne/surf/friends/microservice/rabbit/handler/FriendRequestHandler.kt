@@ -48,7 +48,7 @@ object FriendRequestHandler {
     fun handleRevokeFriendRequestPacket(
         request: RevokeFriendRequestRequestPacket
     ) = request.launch {
-        FriendRequestRepository.deleteFriendRequest(request.senderUuid, request.receiverUuid)
+        FriendRequestRepository.deleteFriendRequest(request.senderUuid, request.targetUuid)
 
         request.respond(
             RevokeFriendRequestResponsePacket(FriendRequestRemoveResult.Success)
