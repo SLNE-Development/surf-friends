@@ -57,11 +57,11 @@ class CoreFriendsPlayer(
         }.toObjectSet()
 
     override fun hasReceivedFriendRequest(target: FriendsPlayer): Boolean {
-        return receivedFriendRequests.firstOrNull { it.senderUuid == target.uuid && it.targetUuid == uuid } != null
+        return receivedFriendRequests.any { it.senderUuid == target.uuid }
     }
 
     override fun hasSentFriendRequest(target: FriendsPlayer): Boolean {
-        return sentFriendRequests.firstOrNull { it.senderUuid == uuid && it.targetUuid == target.uuid } != null
+        return sentFriendRequests.any { it.targetUuid == target.uuid }
     }
 
     override fun hasFriendship(target: FriendsPlayer): Boolean {
@@ -124,7 +124,7 @@ class CoreFriendsPlayer(
         }
 
         FriendsClientInstance.INSTANCE.friendRequests.removeIf {
-            (it.senderUuid == uuid && it.targetUuid == target.uuid)
+            it.senderUuid == uuid && it.targetUuid == target.uuid
         }
 
         redisApi.publishEvent(

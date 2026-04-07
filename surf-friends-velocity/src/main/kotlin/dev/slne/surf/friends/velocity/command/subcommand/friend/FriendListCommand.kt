@@ -48,7 +48,7 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(FriendPermissionRegistry.COMMAND_FRIEND_LIST)
 
-        playerExecutor { player, args ->
+        playerExecutor { player, _ ->
             val friendsPlayer = FriendsPlayer[player.uniqueId]
             val friendList = friendsPlayer.friendships
 
@@ -64,12 +64,12 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
             container.launch {
                 val friendEntries = friendList
                     .map {
-                        it to it.senderUuid.toSurfPlayer()
+                        it to it.targetUuid.toSurfPlayer()
                     }
-                    .sortedByDescending { (friendship, surfPlayer) ->
+                    .sortedByDescending { (_, surfPlayer) ->
                         surfPlayer?.isOnline() ?: false
                     }.mapNotNull { (friendship, surfPlayer) ->
-                        val friendUuid = friendship.senderUuid
+                        val friendUuid = friendship.targetUuid
 
                         LocalFriendEntry(
                             friendName = PlayerLookupService.getUsername(friendUuid)

@@ -27,6 +27,7 @@ class ConnectionListener {
 
         if (onlineFriends.isNotEmpty()) {
             player.sendText {
+                appendInfoPrefix()
                 info("Aktuell sind ")
                 variableValue(onlineFriends.size)
                 info(" deiner Freunde online. ")
@@ -46,6 +47,7 @@ class ConnectionListener {
 
                     if (onlineFriendPlayer.notificationsEnabled) {
                         onlineFriend.sendText {
+                            appendInfoPrefix()
                             append(friendPlayer.surfPlayer().displayName())
                             info(" ist nun online.")
                         }
@@ -56,6 +58,7 @@ class ConnectionListener {
 
         if (friendRequests.isNotEmpty()) {
             player.sendText {
+                appendInfoPrefix()
                 info("Du hast noch ")
                 variableValue(friendRequests.size)
                 info(" Freundschaftsanfragen offen. ")

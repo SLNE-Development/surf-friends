@@ -1,52 +1,76 @@
 package dev.slne.surf.friends.velocity.command.subcommand.friend
 
-//fun CommandAPICommand.friendJumpCommand() = subcommand("jump") {
-//    withPermission(FriendPermissionRegistry.COMMAND_FRIEND_JUMP)
-//    playerStringArgument("target")
-//    playerExecutor { player, args ->
-//        container.launch {
-//            val target: String by args
-//            val targetUuid = PlayerLookupService.getUuid(target) ?: return@launch run {
-//                player.uniqueId.sendText {
-//                    error("Der Spieler $target wurde nicht gefunden.")
-//                }
-//            }
-//
-//            val friendShip = friendService.getFriendship(player.uniqueId, targetUuid)
-//
-//            if (friendShip == null) {
-//                player.uniqueId.sendText {
-//                    error("Du bist nicht mit $target befreundet.")
-//                }
-//                return@launch
-//            }
-//
-//            if (targetUuid.isOnline()) {
-//                val onlineFriend =
-//                    plugin.proxy.getPlayer(targetUuid).getOrNull() ?: return@launch run {
-//                        player.uniqueId.sendText {
-//                            error("Der Spieler $target ist nicht online.")
-//                        }
-//                    }
-//
-//                player.createConnectionRequest(
-//                    onlineFriend.currentServer.getOrNull()?.server ?: return@launch run {
-//                        player.uniqueId.sendText {
-//                            error("Der Spieler $target ist nicht auf einem Server.")
-//                        }
-//                    }).fireAndForget()
-//
-//                player.uniqueId.sendText {
-//                    success("Du bist ")
-//                    variableValue(target)
-//                    success(" auf den Server gefolgt.")
-//                }
-//                return@launch
-//            }
-//
-//            player.uniqueId.sendText {
-//                error("Der Spieler $target ist nicht online.")
-//            }
-//        }
-//    }
-//}
+import dev.jorel.commandapi.CommandAPICommand
+import dev.jorel.commandapi.kotlindsl.getValue
+import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.kotlindsl.subcommand
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.velocity.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.friends.api.player.FriendsPlayer
+import dev.slne.surf.friends.api.utils.displayName
+import dev.slne.surf.friends.velocity.server
+import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
+import kotlin.jvm.optionals.getOrNull
+
+fun CommandAPICommand.friendJumpCommand() = subcommand("jump") {
+    withPermission(FriendPermissionRegistry.COMMAND_FRIEND_JUMP)
+
+    surfOfflinePlayerArgument("target")
+
+    playerExecutor { player, args ->
+        val target: SurfPlayer by args
+
+        if (player.uniqueId == target.uuid) {
+            player.sendText {
+                appendErrorPrefix()
+                error("Du kannst nicht zu dir selbst springen.")
+            }
+            return@playerExecutor
+        }
+
+        val playerFriendsPlayer = FriendsPlayer[player.uniqueId]
+        val targetFriendsPlayer = FriendsPlayer[target.uuid]
+
+        if (!playerFriendsPlayer.hasFriendship(targetFriendsPlayer)) {
+            player.sendText {
+                appendErrorPrefix()
+                error("Du bist nicht mit ")
+                append(target.displayName())
+                error(" befreundet.")
+            }
+            return@playerExecutor
+        }
+
+        val onlineFriend = server.getPlayer(target.uuid).getOrNull()
+
+        if (onlineFriend == null) {
+            player.sendText {
+                appendErrorPrefix()
+                append(target.displayName())
+                error(" ist nicht online.")
+            }
+            return@playerExecutor
+        }
+
+        val targetServer = onlineFriend.currentServer.getOrNull()?.server
+
+        if (targetServer == null) {
+            player.sendText {
+                appendErrorPrefix()
+                append(target.displayName())
+                error(" ist nicht auf einem Server.")
+            }
+            return@playerExecutor
+        }
+
+        player.createConnectionRequest(targetServer).fireAndForget()
+
+        player.sendText {
+            appendSuccessPrefix()
+            success("Du bist ")
+            append(target.displayName())
+            success(" auf den Server gefolgt.")
+        }
+    }
+}

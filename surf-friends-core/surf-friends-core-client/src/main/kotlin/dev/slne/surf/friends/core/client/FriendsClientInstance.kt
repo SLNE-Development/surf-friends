@@ -42,7 +42,7 @@ abstract class FriendsClientInstance {
         fetch()
     }
 
-    suspend fun onEnable() {
+    fun onEnable() {
 
     }
 
@@ -74,10 +74,7 @@ abstract class FriendsClientInstance {
         ).friendRequests
 
         friendRequests.clear()
-
-        fetched.forEach { friendRequest ->
-            friendRequests.add(friendRequest)
-        }
+        fetched.forEach(friendRequests::add)
     }
 
     suspend fun fetchFriendships() {
@@ -86,10 +83,7 @@ abstract class FriendsClientInstance {
         ).friendships
 
         friendships.clear()
-
-        fetched.forEach { friendship ->
-            friendships.add(friendship)
-        }
+        fetched.forEach(friendships::add)
     }
 
     companion object {

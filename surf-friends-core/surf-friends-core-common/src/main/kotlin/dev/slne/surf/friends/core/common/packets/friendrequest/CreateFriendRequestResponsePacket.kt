@@ -7,5 +7,4 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateFriendRequestResponsePacket(
     val result: FriendRequestCreateResult
-) : RabbitResponsePacket() {
-}
+) : RabbitResponsePacket()

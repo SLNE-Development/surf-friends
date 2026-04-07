@@ -11,6 +11,6 @@ data class FriendRequest(
     val targetUuid: SerializableUUID,
     val createdAt: SerializableOffsetDateTime
 ) {
-    val sender = FriendsPlayer[senderUuid]
-    val target = FriendsPlayer[targetUuid]
+    val sender get() = FriendsPlayer[senderUuid]
+    val target get() = FriendsPlayer[targetUuid]
 }
