@@ -4,62 +4,59 @@ import com.github.shynixn.mccoroutine.velocity.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.friends.core.service.databaseService
-import dev.slne.surf.friends.core.service.friendService
-import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
+import dev.slne.surf.api.core.font.toSmallCaps
+import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.velocity.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.friends.api.player.FriendsPlayer
+import dev.slne.surf.friends.api.utils.displayName
 import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.core.client.redis.event.FriendRequestSendRedisEvent
-import dev.slne.surf.friends.velocity.redisApi
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
-import dev.slne.surf.friends.velocity.util.sendText
-import dev.slne.surf.surfapi.core.api.font.toSmallCaps
-import dev.slne.surf.surfapi.core.api.messages.adventure.clickRunsCommand
-import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
 class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_SEND)
-        playerStringArgument("target")
+        surfOfflinePlayerArgument("target")
         playerExecutor { player, args ->
             container.launch {
-                val target: String by args
-                val targetUuid = PlayerLookupService.getUuid(target) ?: return@launch run {
-                    player.uniqueId.sendText {
-                        error("Der Spieler $target wurde nicht gefunden.")
-                    }
-                }
+                val target: SurfPlayer by args
 
-                if (player.uniqueId == targetUuid) {
-                    player.uniqueId.sendText {
+                if (player.uniqueId == target.uuid) {
+                    player.sendText {
                         error("Du kannst dir keine Freundschaftsanfrage selbst senden.")
                     }
                     return@launch
                 }
 
-                val friendShip = friendService.getFriendship(player.uniqueId, targetUuid)
+                val playerFriendsPlayer = FriendsPlayer[player.uniqueId]
+                val targetFriendsPlayer = FriendsPlayer[target.uuid]
 
-                if (friendShip != null) {
-                    player.uniqueId.sendText {
-                        error("Du bist bereits mit $target befreundet.")
+                if (playerFriendsPlayer.hasFriendship(targetFriendsPlayer)) {
+                    player.sendText {
+                        error("Du bist bereits mit ")
+                        append(target.displayName())
+                        error(" befreundet.")
                     }
                     return@launch
                 }
 
-                val friendRequest = friendService.getFriendRequest(player.uniqueId, targetUuid)
-                val receivedFriendRequest = friendService.getFriendship(targetUuid, player.uniqueId)
-
-                if (friendRequest != null) {
-                    player.uniqueId.sendText {
-                        error("Du hast bereits eine Freundschaftsanfrage an $target gesendet.")
+                if (playerFriendsPlayer.hasSentFriendRequest(targetFriendsPlayer)) {
+                    player.sendText {
+                        error("Du hast bereits eine Freundschaftsanfrage an ")
+                        append(target.displayName())
+                        error(" gesendet.")
                     }
                     return@launch
                 }
 
-                if (receivedFriendRequest != null) {
-                    player.uniqueId.sendText {
-                        error("Du hast bereits eine Freundschaftsanfrage von $target erhalten. Möchtest du diese annehmen?")
+                if (playerFriendsPlayer.hasReceivedFriendRequest(targetFriendsPlayer)) {
+                    player.sendText {
+                        error("Du hast bereits eine Freundschaftsanfrage von ")
+                        append(target.displayName())
+                        error(" erhalten. Möchtest du diese annehmen?")
                         append {
-                            clickRunsCommand("/friend accept $target")
+                            clickRunsCommand("/friend accept ${target.username}")
                             spacer(" [")
                             info("Akzeptieren".toSmallCaps())
                             spacer("]")
@@ -68,30 +65,19 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
                     return@launch
                 }
 
-                friendService.sendFriendRequest(player.uniqueId, targetUuid)
+                playerFriendsPlayer.sendFriendRequest(targetFriendsPlayer)
 
-                player.uniqueId.sendText {
+                player.sendText {
                     success("Du hast eine Freundschaftsanfrage an ")
-                    variableValue(target)
+                    append(target.displayName())
                     success(" gesendet.")
                     append {
-                        clickRunsCommand("/friend revoke $target")
+                        clickRunsCommand("/friend revoke ${target.username}")
                         spacer(" [")
                         info("Zurückziehen".toSmallCaps())
                         spacer("]")
                     }
                 }
-
-                val targetSettings = databaseService.getFriendSettings(targetUuid)
-
-                redisApi.publishEvent(
-                    FriendRequestSendRedisEvent(
-                        player.uniqueId,
-                        player.username,
-                        targetUuid,
-                        targetSettings.announcementsEnabled
-                    )
-                )
             }
         }
     }

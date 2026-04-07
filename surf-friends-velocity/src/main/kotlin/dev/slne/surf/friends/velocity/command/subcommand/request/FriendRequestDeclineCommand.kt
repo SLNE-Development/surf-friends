@@ -5,49 +5,25 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
-import dev.slne.surf.friends.core.service.friendService
-import dev.slne.surf.friends.velocity.command.argument.playerStringArgument
+import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.velocity.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.core.client.redis.event.FriendRequestDenyRedisEvent
-import dev.slne.surf.friends.velocity.redisApi
 import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
-import dev.slne.surf.friends.velocity.util.sendText
-import dev.slne.surf.surfapi.core.api.service.PlayerLookupService
 
 fun CommandAPICommand.friendRequestDeclineCommand() = subcommand("decline") {
     withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_DECLINE)
-    playerStringArgument("target")
+    
+    surfOfflinePlayerArgument("target")
+
     playerExecutor { player, args ->
+        val target: SurfPlayer by args
+
+        val playerFriendsPlayer = FriendsPlayer[player.uniqueId]
+        val targetFriendsPlayer = FriendsPlayer[target.uuid]
+
         container.launch {
-            val target: String by args
-            val targetUuid = PlayerLookupService.getUuid(target) ?: return@launch run {
-                player.uniqueId.sendText {
-                    error("Der Spieler $target wurde nicht gefunden.")
-                }
-            }
-
-            val friendRequest = friendService.getFriendRequest(targetUuid, player.uniqueId)
-
-            if (friendRequest == null) {
-                player.uniqueId.sendText {
-                    error("Du hast keine Freundschaftsanfrage von $target erhalten.")
-                }
-                return@launch
-            }
-
-            friendService.declineFriendRequest(targetUuid, player.uniqueId)
-
-            player.uniqueId.sendText {
-                success("Du hast die Freundschaftsanfrage von ")
-                variableValue(target)
-                success(" abgelehnt.")
-            }
-
-            redisApi.publishEvent(
-                FriendRequestDenyRedisEvent(
-                    targetUuid, player.uniqueId, player.username
-                )
-            )
+            playerFriendsPlayer.declineFriendRequest(targetFriendsPlayer)
         }
     }
 }

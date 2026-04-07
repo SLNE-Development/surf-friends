@@ -13,6 +13,12 @@ import dev.slne.surf.friends.api.result.FriendshipRemoveResult
 import dev.slne.surf.friends.api.utils.toSurfPlayer
 import dev.slne.surf.friends.core.client.FriendsClientInstance
 import dev.slne.surf.friends.core.client.rabbitApi
+import dev.slne.surf.friends.core.client.redis.event.FriendRemoveRedisEvent
+import dev.slne.surf.friends.core.client.redis.event.FriendRequestAcceptRedisEvent
+import dev.slne.surf.friends.core.client.redis.event.FriendRequestDenyRedisEvent
+import dev.slne.surf.friends.core.client.redis.event.FriendRequestRevokeRedisEvent
+import dev.slne.surf.friends.core.client.redis.event.FriendRequestSendRedisEvent
+import dev.slne.surf.friends.core.client.redisApi
 import dev.slne.surf.friends.core.common.packets.friendrequest.ChangeFriendRequestStateRequestPacket
 import dev.slne.surf.friends.core.common.packets.friendrequest.CreateFriendRequestRequestPacket
 import dev.slne.surf.friends.core.common.packets.friendrequest.RevokeFriendRequestRequestPacket
@@ -104,6 +110,12 @@ class CoreFriendsPlayer(
 
         FriendsClientInstance.INSTANCE.friendRequests.add(result.friendRequest)
 
+        redisApi.publishEvent(
+            FriendRequestSendRedisEvent(
+                uuid, target.uuid, target.friendRequestNotificationsEnabled
+            )
+        )
+
         return result
     }
 
@@ -126,6 +138,12 @@ class CoreFriendsPlayer(
         FriendsClientInstance.INSTANCE.friendRequests.removeIf {
             (it.senderUuid == uuid && it.targetUuid == target.uuid)
         }
+
+        redisApi.publishEvent(
+            FriendRequestRevokeRedisEvent(
+                uuid, target.uuid, true
+            )
+        )
 
         return result
     }
@@ -160,6 +178,12 @@ class CoreFriendsPlayer(
             )
         )
 
+        redisApi.publishEvent(
+            FriendRequestAcceptRedisEvent(
+                uuid, target.uuid
+            )
+        )
+
         return result
     }
 
@@ -185,6 +209,12 @@ class CoreFriendsPlayer(
                     || (it.senderUuid == target.uuid && it.targetUuid == target.uuid)
         }
 
+        redisApi.publishEvent(
+            FriendRequestDenyRedisEvent(
+                uuid, target.uuid
+            )
+        )
+
         return result
     }
 
@@ -203,6 +233,12 @@ class CoreFriendsPlayer(
         if (result !is FriendshipRemoveResult.Success) {
             return result
         }
+
+        redisApi.publishEvent(
+            FriendRemoveRedisEvent(
+                uuid, target.uuid
+            )
+        )
 
         FriendsClientInstance.INSTANCE.friendships.removeIf {
             (it.senderUuid == uuid && it.targetUuid == target.uuid) ||
