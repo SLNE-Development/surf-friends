@@ -1,6 +1,6 @@
-package dev.slne.surf.friends.velocity.command.subcommand.request
+package dev.slne.surf.friends.paper.command.subcommand.request
 
-import com.github.shynixn.mccoroutine.velocity.launch
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
@@ -13,9 +13,9 @@ import dev.slne.surf.api.core.messages.pagination.Pagination
 import dev.slne.surf.api.core.service.PlayerLookupService
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
-import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
-import dev.slne.surf.friends.velocity.util.format
+import dev.slne.surf.friends.paper.plugin
+import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
+import dev.slne.surf.friends.paper.util.format
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import java.time.OffsetDateTime
@@ -44,7 +44,7 @@ private val pagination = Pagination<LocalFriendRequest> {
 fun CommandAPICommand.friendRequestListCommand() = subcommand("requests") {
     withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_LIST)
 
-    playerExecutor { player, args ->
+    playerExecutor { player, _ ->
         val friendsPlayer = FriendsPlayer[player.uniqueId]
         val friendRequests = friendsPlayer.receivedFriendRequests
             .sortedByDescending { it.createdAt }
@@ -58,7 +58,7 @@ fun CommandAPICommand.friendRequestListCommand() = subcommand("requests") {
             return@playerExecutor
         }
 
-        container.launch {
+        plugin.launch {
             val requesterEntries = friendRequests.mapNotNull {
                 LocalFriendRequest(
                     requesterName = PlayerLookupService.getUsername(it.senderUuid)
@@ -80,3 +80,4 @@ private data class LocalFriendRequest(
     val requesterDisplayName: Component,
     val createdAt: OffsetDateTime
 )
+

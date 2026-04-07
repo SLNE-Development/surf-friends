@@ -13,5 +13,5 @@ plugins {
 include("surf-friends-api")
 include("surf-friends-core:surf-friends-core-common")
 include("surf-friends-core:surf-friends-core-client")
-include("surf-friends-velocity")
+include("surf-friends-paper")
 include("surf-friends-microservice")

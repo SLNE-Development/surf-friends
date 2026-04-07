@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.velocity.util
+package dev.slne.surf.friends.paper.util
 
 object FriendPermissionRegistry {
     const val COMMAND_FRIEND = "surf.friends.command"
@@ -14,3 +14,4 @@ object FriendPermissionRegistry {
     const val COMMAND_FRIEND_REMOVE = "surf.friends.command.remove"
     const val COMMAND_FRIEND_LIST = "surf.friends.command.list"
 }
+

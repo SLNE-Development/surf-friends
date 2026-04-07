@@ -1,6 +1,6 @@
-package dev.slne.surf.friends.velocity.command.subcommand.request
+package dev.slne.surf.friends.paper.command.subcommand.request
 
-import com.github.shynixn.mccoroutine.velocity.launch
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
@@ -8,18 +8,18 @@ import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.core.api.common.player.SurfPlayer
-import dev.slne.surf.core.api.velocity.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
-import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
+import dev.slne.surf.friends.paper.plugin
+import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
 
 class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandName) {
     init {
         withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_SEND)
         surfOfflinePlayerArgument("target")
         playerExecutor { player, args ->
-            container.launch {
+            plugin.launch {
                 val target: SurfPlayer by args
 
                 if (player.uniqueId == target.uuid) {
@@ -82,3 +82,4 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
         }
     }
 }
+

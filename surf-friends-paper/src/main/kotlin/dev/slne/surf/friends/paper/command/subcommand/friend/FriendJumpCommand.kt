@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.velocity.command.subcommand.friend
+package dev.slne.surf.friends.paper.command.subcommand.friend
 
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.getValue
@@ -6,12 +6,11 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.core.api.common.player.SurfPlayer
-import dev.slne.surf.core.api.velocity.command.argument.surfOfflinePlayerArgument
+import dev.slne.surf.core.api.paper.command.argument.surfOfflinePlayerArgument
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
-import dev.slne.surf.friends.velocity.server
-import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
-import kotlin.jvm.optionals.getOrNull
+import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
+import org.bukkit.Bukkit
 
 fun CommandAPICommand.friendJumpCommand() = subcommand("jump") {
     withPermission(FriendPermissionRegistry.COMMAND_FRIEND_JUMP)
@@ -42,7 +41,7 @@ fun CommandAPICommand.friendJumpCommand() = subcommand("jump") {
             return@playerExecutor
         }
 
-        val onlineFriend = server.getPlayer(target.uuid).getOrNull()
+        val onlineFriend = Bukkit.getPlayer(target.uuid)
 
         if (onlineFriend == null) {
             player.sendText {
@@ -53,24 +52,14 @@ fun CommandAPICommand.friendJumpCommand() = subcommand("jump") {
             return@playerExecutor
         }
 
-        val targetServer = onlineFriend.currentServer.getOrNull()?.server
-
-        if (targetServer == null) {
-            player.sendText {
-                appendErrorPrefix()
-                append(target.displayName())
-                error(" ist nicht auf einem Server.")
-            }
-            return@playerExecutor
-        }
-
-        player.createConnectionRequest(targetServer).fireAndForget()
+        player.teleportAsync(onlineFriend.location)
 
         player.sendText {
             appendSuccessPrefix()
-            success("Du bist ")
+            success("Du wurdest zu ")
             append(target.displayName())
-            success(" auf den Server gefolgt.")
+            success(" teleportiert.")
         }
     }
 }
+

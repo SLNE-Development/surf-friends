@@ -1,7 +1,7 @@
-package dev.slne.surf.friends.velocity
+package dev.slne.surf.friends.paper
 
-import com.github.shynixn.mccoroutine.velocity.launch
-import com.github.shynixn.mccoroutine.velocity.velocityDispatcher
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
 import com.google.auto.service.AutoService
 import dev.slne.surf.friends.core.client.FriendsClientInstance
 import kotlinx.coroutines.CoroutineScope
@@ -10,19 +10,20 @@ import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 
 @AutoService(FriendsClientInstance::class)
-class VelocityFriendsClientInstance : FriendsClientInstance() {
-    override val dataPath: Path = plugin.dataPath
+class PaperFriendsClientInstance : FriendsClientInstance() {
+    override val dataPath: Path get() = plugin.dataFolder.toPath()
 
     override val mainDispatcher: CoroutineContext
-        get() = container.velocityDispatcher
+        get() = plugin.globalRegionDispatcher
 
     override fun launch(
         context: CoroutineContext,
         start: CoroutineStart,
         block: suspend CoroutineScope.() -> Unit
-    ) = container.launch(
+    ) = plugin.launch(
         context = context,
         start = start,
         block = block
     )
 }
+

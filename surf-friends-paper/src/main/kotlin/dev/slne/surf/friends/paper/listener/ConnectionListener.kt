@@ -1,28 +1,28 @@
-package dev.slne.surf.friends.velocity.listener
+package dev.slne.surf.friends.paper.listener
 
-import com.github.shynixn.mccoroutine.velocity.launch
-import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.connection.DisconnectEvent
-import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
-import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.velocity.server
-import kotlin.jvm.optionals.getOrNull
+import dev.slne.surf.friends.paper.plugin
+import org.bukkit.Bukkit
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 
-class ConnectionListener {
-    @Subscribe
-    fun onConnect(event: PlayerChooseInitialServerEvent) {
+class ConnectionListener : Listener {
+    @EventHandler
+    fun onConnect(event: PlayerJoinEvent) {
         val player = event.player
         val friendPlayer = FriendsPlayer[player.uniqueId]
 
         val friendRequests = friendPlayer.receivedFriendRequests
         val onlineFriends = friendPlayer.onlineFriendUuids.mapNotNull {
-            server.getPlayer(it).getOrNull()
+            Bukkit.getPlayer(it)
         }
 
         if (onlineFriends.isNotEmpty()) {
@@ -41,7 +41,7 @@ class ConnectionListener {
                 }
             }
 
-            container.launch {
+            plugin.launch {
                 onlineFriends.forEach { onlineFriend ->
                     val onlineFriendPlayer = FriendsPlayer[onlineFriend.uniqueId]
 
@@ -74,18 +74,14 @@ class ConnectionListener {
         }
     }
 
-    @Subscribe
-    fun onDisconnect(event: DisconnectEvent) {
-        if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
-            return
-        }
-
+    @EventHandler
+    fun onDisconnect(event: PlayerQuitEvent) {
         val player = event.player
         val friendsPlayer = FriendsPlayer[player.uniqueId]
 
-        container.launch {
+        plugin.launch {
             val onlineFriends = friendsPlayer.onlineFriendUuids.mapNotNull {
-                server.getPlayer(it).getOrNull()
+                Bukkit.getPlayer(it)
             }
 
             onlineFriends.forEach { onlineFriend ->
@@ -102,3 +98,4 @@ class ConnectionListener {
         }
     }
 }
+

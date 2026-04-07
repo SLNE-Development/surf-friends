@@ -1,6 +1,6 @@
-package dev.slne.surf.friends.velocity.command.subcommand.friend
+package dev.slne.surf.friends.paper.command.subcommand.friend
 
-import com.github.shynixn.mccoroutine.velocity.launch
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.api.core.font.toSmallCaps
@@ -13,8 +13,8 @@ import dev.slne.surf.api.core.service.PlayerLookupService
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
 import dev.slne.surf.friends.api.utils.toSurfPlayer
-import dev.slne.surf.friends.velocity.container
-import dev.slne.surf.friends.velocity.util.FriendPermissionRegistry
+import dev.slne.surf.friends.paper.plugin
+import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -61,7 +61,7 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
                 return@playerExecutor
             }
 
-            container.launch {
+            plugin.launch {
                 val friendEntries = friendList
                     .map {
                         it to it.friendUuid.toSurfPlayer()
@@ -92,3 +92,4 @@ private data class LocalFriendEntry(
     val isOnline: Boolean,
     val onlineServer: String
 )
+
