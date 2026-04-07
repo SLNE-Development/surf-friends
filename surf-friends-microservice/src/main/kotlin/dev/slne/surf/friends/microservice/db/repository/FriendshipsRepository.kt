@@ -38,6 +38,12 @@ object FriendshipsRepository {
             it[this.createdAt] = createdAt
         }
 
+        FriendshipsTable.insert {
+            it[this.senderUuid] = targetUuid
+            it[this.targetUuid] = senderUuid
+            it[this.createdAt] = createdAt
+        }
+
         Unit
     }
 

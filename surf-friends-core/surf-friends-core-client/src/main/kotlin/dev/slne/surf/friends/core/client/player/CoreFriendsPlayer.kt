@@ -48,21 +48,12 @@ class CoreFriendsPlayer(
 
     override val friendships: @UnmodifiableView ObjectSet<Friendship>
         get() = FriendsClientInstance.INSTANCE.friendships.snapshot().filter {
-            it.targetUuid == uuid
+            it.senderUuid == uuid
         }.toObjectSet()
 
     override val onlineFriendUuids: @UnmodifiableView ObjectSet<UUID>
         get() = friendships.mapNotNull {
-            val sender = SurfCoreApi.getPlayer(it.senderUuid) ?: return@mapNotNull null
-            val receiver = SurfCoreApi.getPlayer(it.targetUuid) ?: return@mapNotNull null
-
-            sender to receiver
-        }.map {
-            if (it.first.uuid == uuid) {
-                it.second.uuid
-            } else {
-                it.first.uuid
-            }
+            SurfCoreApi.getPlayer(it.targetUuid)?.uuid
         }.toObjectSet()
 
     override fun hasReceivedFriendRequest(target: FriendsPlayer): Boolean {
@@ -78,10 +69,7 @@ class CoreFriendsPlayer(
     }
 
     override fun findFriendship(target: FriendsPlayer): Friendship? {
-        return friendships.firstOrNull {
-            (it.senderUuid == uuid && it.targetUuid == target.uuid) ||
-                    (it.senderUuid == target.uuid && it.targetUuid == uuid)
-        }
+        return friendships.firstOrNull { it.targetUuid == target.uuid }
     }
 
     override suspend fun sendFriendRequest(target: FriendsPlayer): FriendRequestCreateResult {
@@ -166,15 +154,24 @@ class CoreFriendsPlayer(
         }
 
         FriendsClientInstance.INSTANCE.friendRequests.removeIf {
-            (it.senderUuid == target.uuid && it.targetUuid == target.uuid)
-                    || (it.senderUuid == target.uuid && it.targetUuid == target.uuid)
+            it.senderUuid == target.uuid && it.targetUuid == uuid
         }
+
+        val now = OffsetDateTime.now()
 
         FriendsClientInstance.INSTANCE.friendships.add(
             Friendship(
                 senderUuid = uuid,
                 targetUuid = target.uuid,
-                createdAt = OffsetDateTime.now()
+                createdAt = now
+            )
+        )
+
+        FriendsClientInstance.INSTANCE.friendships.add(
+            Friendship(
+                senderUuid = target.uuid,
+                targetUuid = uuid,
+                createdAt = now
             )
         )
 
@@ -205,8 +202,7 @@ class CoreFriendsPlayer(
         }
 
         FriendsClientInstance.INSTANCE.friendRequests.removeIf {
-            (it.senderUuid == target.uuid && it.targetUuid == target.uuid)
-                    || (it.senderUuid == target.uuid && it.targetUuid == target.uuid)
+            it.senderUuid == target.uuid && it.targetUuid == uuid
         }
 
         redisApi.publishEvent(
