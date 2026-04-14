@@ -79,6 +79,7 @@ class FriendListCommand(commandName: String) : CommandAPICommand(commandName) {
                     }
 
                 player.sendText {
+                    appendNewline()
                     append(pagination.renderComponent(friendEntries))
                 }
             }

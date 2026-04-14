@@ -69,6 +69,7 @@ fun CommandAPICommand.friendRequestListCommand() = subcommand("requests") {
             }
 
             player.sendText {
+                appendNewline()
                 append(pagination.renderComponent(requesterEntries))
             }
         }

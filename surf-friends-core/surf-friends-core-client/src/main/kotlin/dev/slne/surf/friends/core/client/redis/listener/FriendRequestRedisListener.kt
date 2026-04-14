@@ -1,7 +1,9 @@
 package dev.slne.surf.friends.core.client.redis.listener
 
+import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.clickCallback
+import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.core.api.common.util.sendText
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
@@ -140,6 +142,12 @@ object FriendRequestRedisListener {
             success("Du hast eine Freundschaftsanfrage an ")
             append(target.displayName())
             success(" gesendet.")
+            append {
+                clickRunsCommand("/friend revoke ${target?.username}")
+                spacer(" [")
+                info("Zurückziehen".toSmallCaps())
+                spacer("]")
+            }
         }
     }
 }

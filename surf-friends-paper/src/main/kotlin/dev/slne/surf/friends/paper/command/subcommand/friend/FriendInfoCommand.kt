@@ -28,6 +28,7 @@ fun CommandAPICommand.friendInfoCommand() = subcommand("info") {
             val targetSurfPlayer = target.surfPlayer()
 
             player.sendText {
+                appendNewline()
                 info("Freundschaftsinformationen".toSmallCaps())
                 appendNewline()
 

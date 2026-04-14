@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class FriendRequestRemoveResult {
+    @Serializable
     object Success : FriendRequestRemoveResult()
 
     @Serializable

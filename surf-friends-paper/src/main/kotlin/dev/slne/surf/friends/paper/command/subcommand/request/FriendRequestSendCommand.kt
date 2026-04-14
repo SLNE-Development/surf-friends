@@ -3,7 +3,7 @@ package dev.slne.surf.friends.paper.command.subcommand.request
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import dev.slne.surf.api.core.command.args.awaiting
+import dev.slne.surf.api.core.command.args.awaitingOrNull
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.api.core.messages.adventure.sendText
@@ -20,10 +20,19 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
         surfOfflinePlayerArgument("target")
         playerExecutor { player, args ->
             plugin.launch {
-                val target = args.awaiting<SurfPlayer>("target")
+                val target = args.awaitingOrNull<SurfPlayer?>("target")
+
+                if (target == null) {
+                    player.sendText {
+                        appendErrorPrefix()
+                        error("Der angegebene Spieler wurde nicht gefunden.")
+                    }
+                    return@launch
+                }
 
                 if (player.uniqueId == target.uuid) {
                     player.sendText {
+                        appendErrorPrefix()
                         error("Du kannst dir keine Freundschaftsanfrage selbst senden.")
                     }
                     return@launch
@@ -34,6 +43,7 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
 
                 if (playerFriendsPlayer.hasFriendship(targetFriendsPlayer)) {
                     player.sendText {
+                        appendErrorPrefix()
                         error("Du bist bereits mit ")
                         append(target.displayName())
                         error(" befreundet.")
@@ -43,6 +53,7 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
 
                 if (playerFriendsPlayer.hasSentFriendRequest(targetFriendsPlayer)) {
                     player.sendText {
+                        appendErrorPrefix()
                         error("Du hast bereits eine Freundschaftsanfrage an ")
                         append(target.displayName())
                         error(" gesendet.")
@@ -52,6 +63,7 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
 
                 if (playerFriendsPlayer.hasReceivedFriendRequest(targetFriendsPlayer)) {
                     player.sendText {
+                        appendErrorPrefix()
                         error("Du hast bereits eine Freundschaftsanfrage von ")
                         append(target.displayName())
                         error(" erhalten. Möchtest du diese annehmen?")
@@ -66,18 +78,6 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
                 }
 
                 playerFriendsPlayer.sendFriendRequest(targetFriendsPlayer)
-
-                player.sendText {
-                    success("Du hast eine Freundschaftsanfrage an ")
-                    append(target.displayName())
-                    success(" gesendet.")
-                    append {
-                        clickRunsCommand("/friend revoke ${target.username}")
-                        spacer(" [")
-                        info("Zurückziehen".toSmallCaps())
-                        spacer("]")
-                    }
-                }
             }
         }
     }
