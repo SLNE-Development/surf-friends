@@ -4,8 +4,11 @@ plugins {
 
 surfPaperPluginApi {
     withCorePaper()
-
     mainClass("dev.slne.surf.friends.paper.SurfFriendsPaper")
+
+    serverDependencies {
+        register("surf-settings-paper")
+    }
 }
 
 dependencies {
