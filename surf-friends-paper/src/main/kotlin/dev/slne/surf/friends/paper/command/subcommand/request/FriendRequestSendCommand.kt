@@ -2,8 +2,8 @@ package dev.slne.surf.friends.paper.command.subcommand.request
 
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.kotlindsl.getValue
 import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.slne.surf.api.core.command.args.awaiting
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.api.core.messages.adventure.sendText
@@ -20,7 +20,7 @@ class FriendRequestSendCommand(commandName: String) : CommandAPICommand(commandN
         surfOfflinePlayerArgument("target")
         playerExecutor { player, args ->
             plugin.launch {
-                val target: SurfPlayer by args
+                val target = args.awaiting<SurfPlayer>("target")
 
                 if (player.uniqueId == target.uuid) {
                     player.sendText {
