@@ -1,11 +1,12 @@
 plugins {
-    id("dev.slne.surf.api.gradle.core")
+    id("dev.slne.surf.api.gradle.paper-raw")
 }
 
-surfCoreApi {
+surfRawPaperApi {
     withSurfRedis()
-    withCoreCommon()
+    withCorePaper()
 }
+
 
 dependencies {
     api(projects.surfFriendsCore.surfFriendsCoreCommon)

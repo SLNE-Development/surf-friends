@@ -6,7 +6,6 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.pagination.Pagination
 import dev.slne.surf.api.core.service.PlayerLookupService
@@ -33,12 +32,6 @@ private val pagination = Pagination<LocalFriendEntry> {
                 } else {
                     error("(Offline)")
                 }
-                hoverEvent(buildText {
-                    info("Klicke hier, um ")
-                    variableValue(row.friendName)
-                    info(" hinterher zuspringen.")
-                })
-                clickRunsCommand("/friend jump ${row.friendName}")
             }
         )
     }

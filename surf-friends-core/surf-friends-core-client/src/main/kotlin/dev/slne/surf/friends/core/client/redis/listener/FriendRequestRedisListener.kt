@@ -4,6 +4,8 @@ import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.clickCallback
 import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
+import dev.slne.surf.core.api.common.player.SurfPlayer
+import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.core.api.common.util.sendText
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
@@ -15,6 +17,7 @@ import dev.slne.surf.friends.core.client.redis.event.FriendRequestRevokeRedisEve
 import dev.slne.surf.friends.core.client.redis.event.FriendRequestSendRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
 import net.kyori.adventure.text.event.HoverEvent
+import org.bukkit.Bukkit
 
 object FriendRequestRedisListener {
     @OnRedisEvent
@@ -24,19 +27,23 @@ object FriendRequestRedisListener {
         val executor = event.executorUuid.toSurfPlayer()
         val target = event.targetUuid.toSurfPlayer()
 
-        target?.sendText {
-            appendInfoPrefix()
+        if (SurfServer.current().hasPlayer(target)) {
+            target?.sendText {
+                appendInfoPrefix()
 
-            append(executor.displayName())
-            info(" hat deine Freundschaftsanfrage angenommen.")
+                append(executor.displayName())
+                info(" hat deine Freundschaftsanfrage angenommen.")
+            }
         }
 
-        executor?.sendText {
-            appendSuccessPrefix()
+        if (SurfServer.current().hasPlayer(executor)) {
+            executor?.sendText {
+                appendSuccessPrefix()
 
-            success("Du hast die Freundschaftsanfrage von ")
-            append(target.displayName())
-            success(" angenommen.")
+                success("Du hast die Freundschaftsanfrage von ")
+                append(target.displayName())
+                success(" angenommen.")
+            }
         }
     }
 
@@ -47,19 +54,23 @@ object FriendRequestRedisListener {
         val executor = event.executorUuid.toSurfPlayer()
         val target = event.targetUuid.toSurfPlayer()
 
-        target?.sendText {
-            appendInfoPrefix()
+        if (SurfServer.current().hasPlayer(target)) {
+            target?.sendText {
+                appendInfoPrefix()
 
-            append(executor.displayName())
-            info(" hat deine Freundschaftsanfrage abgelehnt.")
+                append(executor.displayName())
+                info(" hat deine Freundschaftsanfrage abgelehnt.")
+            }
         }
 
-        executor?.sendText {
-            appendSuccessPrefix()
+        if (SurfServer.current().hasPlayer(executor)) {
+            executor?.sendText {
+                appendSuccessPrefix()
 
-            success("Du hast die Freundschaftsanfrage von ")
-            append(target.displayName())
-            success(" abgelehnt.")
+                success("Du hast die Freundschaftsanfrage von ")
+                append(target.displayName())
+                success(" abgelehnt.")
+            }
         }
     }
 
@@ -71,21 +82,25 @@ object FriendRequestRedisListener {
         val target = event.targetUuid.toSurfPlayer()
 
         if (event.notifyTarget) {
-            target?.sendText {
-                appendInfoPrefix()
+            if (SurfServer.current().hasPlayer(target)) {
+                target?.sendText {
+                    appendInfoPrefix()
 
-                info("Die Freundschaftsanfrage von ")
-                append(executor.displayName())
-                info(" wurde zurückgezogen.")
+                    info("Die Freundschaftsanfrage von ")
+                    append(executor.displayName())
+                    info(" wurde zurückgezogen.")
+                }
             }
         }
 
-        executor?.sendText {
-            appendSuccessPrefix()
+        if (SurfServer.current().hasPlayer(executor)) {
+            executor?.sendText {
+                appendSuccessPrefix()
 
-            success("Du hast die Freundschaftsanfrage an ")
-            append(target.displayName())
-            success(" zurückgezogen.")
+                success("Du hast die Freundschaftsanfrage an ")
+                append(target.displayName())
+                success(" zurückgezogen.")
+            }
         }
     }
 
@@ -100,54 +115,61 @@ object FriendRequestRedisListener {
         val targetFriendPlayer = FriendsPlayer[event.targetUuid]
 
         if (event.notifyTarget) {
-            target?.sendText {
-                appendInfoPrefix()
+            if (SurfServer.current().hasPlayer(target)) {
+                target?.sendText {
+                    appendInfoPrefix()
 
-                info("Du hast eine Freundschaftsanfrage von ")
-                append(executor.displayName())
-                info(" erhalten.")
-                appendSpace()
-                append {
-                    success("[✔]")
-                    hoverEvent(HoverEvent.showText(buildText {
-                        spacer("Klicke, um die Freundschaftsanfrage von ")
-                        append(executor.displayName())
-                        spacer(" anzunehmen.")
-                    }))
-                    clickCallback {
-                        FriendsClientInstance.INSTANCE.launch {
-                            targetFriendPlayer.acceptFriendRequest(executorFriendsPlayer)
+                    info("Du hast eine Freundschaftsanfrage von ")
+                    append(executor.displayName())
+                    info(" erhalten.")
+                    appendSpace()
+                    append {
+                        success("[✔]")
+                        hoverEvent(HoverEvent.showText(buildText {
+                            spacer("Klicke, um die Freundschaftsanfrage von ")
+                            append(executor.displayName())
+                            spacer(" anzunehmen.")
+                        }))
+                        clickCallback {
+                            FriendsClientInstance.INSTANCE.launch {
+                                targetFriendPlayer.acceptFriendRequest(executorFriendsPlayer)
+                            }
                         }
                     }
-                }
-                append {
-                    error("[❌]")
-                    hoverEvent(HoverEvent.showText(buildText {
-                        spacer("Klicke, um die Freundschaftsanfrage von ")
-                        append(executor.displayName())
-                        spacer(" abzulehnen.")
-                    }))
-                    clickCallback {
-                        FriendsClientInstance.INSTANCE.launch {
-                            targetFriendPlayer.declineFriendRequest(executorFriendsPlayer)
+                    appendSpace()
+                    append {
+                        error("[❌]")
+                        hoverEvent(HoverEvent.showText(buildText {
+                            spacer("Klicke, um die Freundschaftsanfrage von ")
+                            append(executor.displayName())
+                            spacer(" abzulehnen.")
+                        }))
+                        clickCallback {
+                            FriendsClientInstance.INSTANCE.launch {
+                                targetFriendPlayer.declineFriendRequest(executorFriendsPlayer)
+                            }
                         }
                     }
                 }
             }
         }
 
-        executor?.sendText {
-            appendSuccessPrefix()
-
-            success("Du hast eine Freundschaftsanfrage an ")
-            append(target.displayName())
-            success(" gesendet.")
-            append {
-                clickRunsCommand("/friend revoke ${target?.username}")
-                spacer(" [")
-                info("Zurückziehen".toSmallCaps())
-                spacer("]")
+        if (SurfServer.current().hasPlayer(executor)) {
+            executor?.sendText {
+                appendSuccessPrefix()
+                success("Du hast eine Freundschaftsanfrage an ")
+                append(target.displayName())
+                success(" gesendet.")
+                append {
+                    clickRunsCommand("/friend revoke ${target?.username}")
+                    spacer(" [")
+                    info("Zurückziehen".toSmallCaps())
+                    spacer("]")
+                }
             }
         }
     }
+
+    private fun SurfServer.hasPlayer(surfPlayer: SurfPlayer?) =
+        surfPlayer != null && Bukkit.getPlayer(surfPlayer.uuid) != null // TODO: schöner machen
 }

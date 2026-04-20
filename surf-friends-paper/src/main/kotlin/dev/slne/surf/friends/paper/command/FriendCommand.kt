@@ -4,7 +4,6 @@ import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.subcommand
 import dev.slne.surf.friends.paper.command.subcommand.friend.FriendListCommand
 import dev.slne.surf.friends.paper.command.subcommand.friend.friendInfoCommand
-import dev.slne.surf.friends.paper.command.subcommand.friend.friendJumpCommand
 import dev.slne.surf.friends.paper.command.subcommand.friend.friendRemoveCommand
 import dev.slne.surf.friends.paper.command.subcommand.request.*
 import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
@@ -15,7 +14,6 @@ fun friendCommand() = commandAPICommand("friend") {
 
     friendRemoveCommand()
     friendInfoCommand()
-    friendJumpCommand()
 
     friendRequestAcceptCommand()
     friendRequestDeclineCommand()
