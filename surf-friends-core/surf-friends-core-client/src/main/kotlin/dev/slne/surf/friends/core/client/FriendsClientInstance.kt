@@ -38,12 +38,10 @@ abstract class FriendsClientInstance {
         friendRequests = redisApi.createSyncList<FriendRequest>("friend-requests")
         friendships = redisApi.createSyncList<Friendship>("friendships")
         redisApi.freezeAndConnect()
-
-        fetch()
     }
 
-    fun onEnable() {
-
+    suspend fun onEnable() {
+        fetch()
     }
 
     suspend fun onDisable() {
