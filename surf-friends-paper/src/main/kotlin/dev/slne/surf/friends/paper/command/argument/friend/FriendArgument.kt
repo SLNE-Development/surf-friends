@@ -21,7 +21,7 @@ class FriendArgument(nodeName: String) :
         val senderPlayer = FriendsPlayer[info.sender.uuid()]
 
         val matchingFriendship = senderPlayer.friendships.firstOrNull { friendship ->
-            resolveUsername(friendship.friendUuid) == info.currentInput
+            resolveUsername(friendship.friendUuid).equals(info.currentInput, ignoreCase = true)
         } ?: throw CustomArgumentException.fromAdventureComponent(
             buildText {
                 appendErrorPrefix()
