@@ -6,7 +6,7 @@ plugins {
 }
 
 surfCoreApi {
-    withSurfDatabaseR2dbc("2.3.1", "dev.slne.surf.friends.libs.database")
+    withSurfDatabaseR2dbc("2.3.2", "dev.slne.surf.friends.libs.database")
 }
 
 surfMicroservice {
