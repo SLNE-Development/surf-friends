@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.paper.util
+package dev.slne.surf.friends.core.client.util
 
 import dev.slne.surf.api.core.messages.adventure.buildText
 import java.time.OffsetDateTime
@@ -10,4 +10,3 @@ fun OffsetDateTime.format(): String = format(DATE_TIME_FORMATTER)
 fun OffsetDateTime.formatComponent() = buildText {
     variableValue(format())
 }
-

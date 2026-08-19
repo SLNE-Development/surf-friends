@@ -5,19 +5,18 @@ import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.clickCallback
 import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.core.api.common.player.SurfPlayer
-import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.core.api.common.util.sendText
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
 import dev.slne.surf.friends.api.utils.toSurfPlayer
 import dev.slne.surf.friends.core.client.FriendsClientInstance
+import dev.slne.surf.friends.core.client.platform.FriendsPlatform
 import dev.slne.surf.friends.core.client.redis.event.FriendRequestAcceptRedisEvent
 import dev.slne.surf.friends.core.client.redis.event.FriendRequestDenyRedisEvent
 import dev.slne.surf.friends.core.client.redis.event.FriendRequestRevokeRedisEvent
 import dev.slne.surf.friends.core.client.redis.event.FriendRequestSendRedisEvent
 import dev.slne.surf.redis.event.OnRedisEvent
 import net.kyori.adventure.text.event.HoverEvent
-import org.bukkit.Bukkit
 
 object FriendRequestRedisListener {
     @OnRedisEvent
@@ -27,7 +26,7 @@ object FriendRequestRedisListener {
         val executor = event.executorUuid.toSurfPlayer()
         val target = event.targetUuid.toSurfPlayer()
 
-        if (SurfServer.current().hasPlayer(target)) {
+        if (isOnThisServer(target)) {
             target?.sendText {
                 appendInfoPrefix()
 
@@ -36,7 +35,7 @@ object FriendRequestRedisListener {
             }
         }
 
-        if (SurfServer.current().hasPlayer(executor)) {
+        if (isOnThisServer(executor)) {
             executor?.sendText {
                 appendSuccessPrefix()
 
@@ -54,7 +53,7 @@ object FriendRequestRedisListener {
         val executor = event.executorUuid.toSurfPlayer()
         val target = event.targetUuid.toSurfPlayer()
 
-        if (SurfServer.current().hasPlayer(target)) {
+        if (isOnThisServer(target)) {
             target?.sendText {
                 appendInfoPrefix()
 
@@ -63,7 +62,7 @@ object FriendRequestRedisListener {
             }
         }
 
-        if (SurfServer.current().hasPlayer(executor)) {
+        if (isOnThisServer(executor)) {
             executor?.sendText {
                 appendSuccessPrefix()
 
@@ -82,7 +81,7 @@ object FriendRequestRedisListener {
         val target = event.targetUuid.toSurfPlayer()
 
         if (event.notifyTarget) {
-            if (SurfServer.current().hasPlayer(target)) {
+            if (isOnThisServer(target)) {
                 target?.sendText {
                     appendInfoPrefix()
 
@@ -93,7 +92,7 @@ object FriendRequestRedisListener {
             }
         }
 
-        if (SurfServer.current().hasPlayer(executor)) {
+        if (isOnThisServer(executor)) {
             executor?.sendText {
                 appendSuccessPrefix()
 
@@ -115,7 +114,7 @@ object FriendRequestRedisListener {
         val targetFriendPlayer = FriendsPlayer[event.targetUuid]
 
         if (event.notifyTarget) {
-            if (SurfServer.current().hasPlayer(target)) {
+            if (isOnThisServer(target)) {
                 target?.sendText {
                     appendInfoPrefix()
 
@@ -154,7 +153,7 @@ object FriendRequestRedisListener {
             }
         }
 
-        if (SurfServer.current().hasPlayer(executor)) {
+        if (isOnThisServer(executor)) {
             executor?.sendText {
                 appendSuccessPrefix()
                 success("Du hast eine Freundschaftsanfrage an ")
@@ -170,6 +169,6 @@ object FriendRequestRedisListener {
         }
     }
 
-    private fun SurfServer.hasPlayer(surfPlayer: SurfPlayer?) =
-        surfPlayer != null && Bukkit.getPlayer(surfPlayer.uuid) != null // TODO: schöner machen
+    private fun isOnThisServer(surfPlayer: SurfPlayer?) =
+        surfPlayer != null && FriendsPlatform.INSTANCE.isOnline(surfPlayer.uuid)
 }

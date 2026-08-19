@@ -1,4 +1,4 @@
-package dev.slne.surf.friends.paper.util
+package dev.slne.surf.friends.core.client.util
 
 import dev.slne.surf.api.core.service.PlayerLookupService
 import dev.slne.surf.core.api.common.SurfCoreApi

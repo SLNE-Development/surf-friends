@@ -6,10 +6,10 @@ import dev.slne.surf.friends.paper.command.subcommand.friend.FriendListCommand
 import dev.slne.surf.friends.paper.command.subcommand.friend.friendInfoCommand
 import dev.slne.surf.friends.paper.command.subcommand.friend.friendRemoveCommand
 import dev.slne.surf.friends.paper.command.subcommand.request.*
-import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
+import dev.slne.surf.friends.core.client.permission.FriendPermissions
 
 fun friendCommand() = commandAPICommand("friend") {
-    withPermission(FriendPermissionRegistry.COMMAND_FRIEND)
+    withPermission(FriendPermissions.COMMAND_FRIEND)
     withAliases("f")
 
     friendRemoveCommand()

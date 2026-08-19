@@ -6,10 +6,10 @@ import dev.slne.surf.api.core.command.args.awaiting
 import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.paper.command.argument.friend.friendArgument
-import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
+import dev.slne.surf.friends.core.client.permission.FriendPermissions
 
 fun CommandAPICommand.friendRemoveCommand() = subcommand("remove") {
-    withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REMOVE)
+    withPermission(FriendPermissions.COMMAND_FRIEND_REMOVE)
 
     friendArgument("target")
 

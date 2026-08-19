@@ -6,10 +6,10 @@ import dev.slne.surf.api.core.command.args.awaiting
 import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.paper.command.argument.request.receivedFriendRequestArgument
-import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
+import dev.slne.surf.friends.core.client.permission.FriendPermissions
 
 fun CommandAPICommand.friendRequestAcceptCommand() = subcommand("accept") {
-    withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_ACCEPT)
+    withPermission(FriendPermissions.COMMAND_FRIEND_REQUEST_ACCEPT)
 
     receivedFriendRequestArgument("target")
 

@@ -6,10 +6,10 @@ import dev.slne.surf.api.core.command.args.awaiting
 import dev.slne.surf.api.paper.command.executors.playerExecutorSuspend
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.paper.command.argument.request.sentFriendRequestArgument
-import dev.slne.surf.friends.paper.util.FriendPermissionRegistry
+import dev.slne.surf.friends.core.client.permission.FriendPermissions
 
 fun CommandAPICommand.friendRequestRevokeCommand() = subcommand("revoke") {
-    withPermission(FriendPermissionRegistry.COMMAND_FRIEND_REQUEST_REVOKE)
+    withPermission(FriendPermissions.COMMAND_FRIEND_REQUEST_REVOKE)
 
     sentFriendRequestArgument("target")
 

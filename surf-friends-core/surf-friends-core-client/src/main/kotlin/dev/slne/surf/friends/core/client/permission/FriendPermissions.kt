@@ -1,6 +1,9 @@
-package dev.slne.surf.friends.paper.util
+package dev.slne.surf.friends.core.client.permission
 
-object FriendPermissionRegistry {
+/**
+ * Platform-neutral registry of all permission node strings used by surf-friends.
+ */
+object FriendPermissions {
     const val COMMAND_FRIEND = "surf.friends.command"
 
     const val COMMAND_FRIEND_REQUEST_SEND = "surf.friends.command.request.send"
@@ -14,4 +17,3 @@ object FriendPermissionRegistry {
     const val COMMAND_FRIEND_REMOVE = "surf.friends.command.remove"
     const val COMMAND_FRIEND_LIST = "surf.friends.command.list"
 }
-
