@@ -22,7 +22,10 @@ abstract class FriendsClientInstance {
     val redisApi = RedisApi.create("surf-friends")
     val rabbitApi = ClientRabbitMQApi.create("surf-friends", dataPath)
 
+    @Volatile
     lateinit var friendRequests: SyncList<FriendRequest>
+
+    @Volatile
     lateinit var friendships: SyncList<Friendship>
 
     private var subscribeToEvents: Boolean = false

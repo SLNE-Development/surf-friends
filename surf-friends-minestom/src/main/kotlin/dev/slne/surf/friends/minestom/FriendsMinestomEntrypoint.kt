@@ -29,6 +29,7 @@ class FriendsMinestomEntrypoint @Inject constructor(
     }
 
     companion object {
+        @Volatile
         lateinit var dataPath: Path
     }
 }

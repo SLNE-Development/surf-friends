@@ -5,11 +5,13 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 private val log = logger()
 
 internal val friendArgumentScope = CoroutineScope(
-    Dispatchers.Default +
+    SupervisorJob() +
+            Dispatchers.Default +
             CoroutineName("FriendArguments") +
             CoroutineExceptionHandler { _, throwable ->
                 log.atWarning()

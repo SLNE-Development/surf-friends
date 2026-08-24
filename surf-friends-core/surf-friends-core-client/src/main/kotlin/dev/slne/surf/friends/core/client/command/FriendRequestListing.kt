@@ -3,11 +3,9 @@ package dev.slne.surf.friends.core.client.command
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.clickRunsCommand
 import dev.slne.surf.api.core.messages.pagination.Pagination
 import dev.slne.surf.api.core.service.PlayerLookupService
 import dev.slne.surf.friends.api.player.FriendsPlayer
-import dev.slne.surf.friends.api.utils.displayName
 import dev.slne.surf.friends.core.client.util.format
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -37,7 +35,6 @@ private val pagination = Pagination<LocalFriendRequest> {
 
 private data class LocalFriendRequest(
     val requesterName: String,
-    val requesterDisplayName: Component,
     val createdAt: OffsetDateTime
 )
 
@@ -59,7 +56,6 @@ suspend fun friendRequestListComponent(player: UUID): Component {
         LocalFriendRequest(
             requesterName = PlayerLookupService.getUsername(it.senderUuid)
                 ?: return@mapNotNull null,
-            requesterDisplayName = it.sender.surfPlayer().displayName(),
             createdAt = it.createdAt
         )
     }

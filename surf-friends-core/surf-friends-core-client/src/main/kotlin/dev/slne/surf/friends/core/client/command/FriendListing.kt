@@ -5,12 +5,15 @@ import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.pagination.Pagination
 import dev.slne.surf.api.core.service.PlayerLookupService
+import dev.slne.surf.core.api.common.SurfCoreApi
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.api.utils.displayName
-import dev.slne.surf.friends.api.utils.toSurfPlayer
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import java.util.*
+
+private const val UNKNOWN_SERVER = "Unbekannt"
 
 private val pagination = Pagination<LocalFriendEntry> {
     title { primary("Freundesliste".toSmallCaps(), TextDecoration.BOLD) }
@@ -52,24 +55,39 @@ suspend fun friendListComponent(player: UUID): Component {
         }
     }
 
-    val friendEntries = friendList
-        .map {
-            it to it.friendUuid.toSurfPlayer()
-        }
-        .sortedByDescending { (_, surfPlayer) ->
-            surfPlayer?.isOnline() ?: false
-        }.mapNotNull { (friendship, surfPlayer) ->
-            LocalFriendEntry(
-                friendName = PlayerLookupService.getUsername(friendship.friendUuid)
-                    ?: return@mapNotNull null,
-                friendDisplayName = surfPlayer.displayName(),
-                isOnline = surfPlayer?.isOnline() ?: false,
-                onlineServer = surfPlayer?.currentServer?.displayName ?: "Unbekannt"
+    val online = ObjectArrayList<LocalFriendEntry>()
+    val offline = ObjectArrayList<LocalFriendEntry>()
+
+    for ((_, friendUuid) in friendList) {
+        val onlinePlayer = SurfCoreApi.getPlayer(friendUuid)
+        val surfPlayer = onlinePlayer ?: SurfCoreApi.getOfflinePlayer(friendUuid)
+        val friendName = PlayerLookupService.getUsername(friendUuid) ?: continue
+
+        if (onlinePlayer != null) {
+            online.add(
+                LocalFriendEntry(
+                    friendName = friendName,
+                    friendDisplayName = surfPlayer.displayName(),
+                    isOnline = true,
+                    onlineServer = onlinePlayer.currentServer?.displayName ?: UNKNOWN_SERVER
+                )
+            )
+        } else {
+            offline.add(
+                LocalFriendEntry(
+                    friendName = friendName,
+                    friendDisplayName = surfPlayer.displayName(),
+                    isOnline = false,
+                    onlineServer = UNKNOWN_SERVER
+                )
             )
         }
+    }
+
+    online.addAll(offline)
 
     return buildText {
         appendNewline()
-        append(pagination.renderComponent(friendEntries))
+        append(pagination.renderComponent(online))
     }
 }
