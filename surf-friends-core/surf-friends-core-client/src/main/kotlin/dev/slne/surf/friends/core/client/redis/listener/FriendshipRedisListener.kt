@@ -1,5 +1,6 @@
 package dev.slne.surf.friends.core.client.redis.listener
 
+import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.core.api.common.util.sendText
 import dev.slne.surf.friends.api.utils.displayName
 import dev.slne.surf.friends.api.utils.toSurfPlayer
@@ -13,7 +14,9 @@ object FriendshipRedisListener {
         event: FriendRemoveRedisEvent
     ) = FriendsClientInstance.INSTANCE.launch {
         val executor = event.executorUuid.toSurfPlayer()
+            ?.takeIf { it.currentServer?.uuid == SurfServer.current().uuid }
         val target = event.targetUuid.toSurfPlayer()
+            ?.takeIf { it.currentServer?.uuid == SurfServer.current().uuid }
 
         target?.sendText {
             appendInfoPrefix()
