@@ -89,11 +89,6 @@ abstract class FriendsClientInstance {
 
     companion object {
         val INSTANCE get() = instance
-
-        const val SETTINGS_FRIEND_REQUEST_NOTIFICATIONS_ENABLED_KEY =
-            "friend-request-notifications-enabled"
-        const val SETTINGS_NOTIFICATIONS_ENABLED_KEY = "friend-notifications-enabled"
-        const val SETTINGS_SOUNDS_ENABLED_KEY = "friend-sounds-enabled"
     }
 }
 

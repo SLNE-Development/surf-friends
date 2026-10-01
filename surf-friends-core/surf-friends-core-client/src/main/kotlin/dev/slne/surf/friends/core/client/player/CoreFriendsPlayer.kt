@@ -20,6 +20,7 @@ import dev.slne.surf.friends.core.common.packets.friendrequest.CreateFriendReque
 import dev.slne.surf.friends.core.common.packets.friendrequest.RevokeFriendRequestRequestPacket
 import dev.slne.surf.friends.core.common.packets.friendship.RemoveFriendshipRequestPacket
 import dev.slne.surf.settings.api.SurfSettingsApi
+import dev.slne.surf.settings.api.setting.SettingKeys
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import it.unimi.dsi.fastutil.objects.ObjectSet
@@ -331,46 +332,22 @@ class CoreFriendsPlayer(
     }
 
     override val notificationsEnabled: Boolean
-        get() = SurfSettingsApi.getPlayerSetting(
+        get() = SurfSettingsApi.getSettingValue(
             uuid,
-            FriendsClientInstance.SETTINGS_NOTIFICATIONS_ENABLED_KEY
-        )?.getBoolean() ?: false
-
-    override suspend fun setNotificationsEnabled(value: Boolean) {
-        SurfSettingsApi.saveSetting(
-            uuid,
-            FriendsClientInstance.SETTINGS_NOTIFICATIONS_ENABLED_KEY,
-            value.toString()
+            SettingKeys.FRIEND_NOTIFICATIONS
         )
-    }
 
     override val soundsEnabled: Boolean
-        get() = SurfSettingsApi.getPlayerSetting(
+        get() = SurfSettingsApi.getSettingValue(
             uuid,
-            FriendsClientInstance.SETTINGS_SOUNDS_ENABLED_KEY
-        )?.getBoolean() ?: false
-
-    override suspend fun setSoundsEnabled(value: Boolean) {
-        SurfSettingsApi.saveSetting(
-            uuid,
-            FriendsClientInstance.SETTINGS_SOUNDS_ENABLED_KEY,
-            value.toString()
+            SettingKeys.FRIEND_SOUNDS
         )
-    }
 
     override val friendRequestNotificationsEnabled: Boolean
-        get() = SurfSettingsApi.getPlayerSetting(
+        get() = SurfSettingsApi.getSettingValue(
             uuid,
-            FriendsClientInstance.SETTINGS_FRIEND_REQUEST_NOTIFICATIONS_ENABLED_KEY
-        )?.getBoolean() ?: false
-
-    override suspend fun setFriendRequestNotificationsEnabled(value: Boolean) {
-        SurfSettingsApi.saveSetting(
-            uuid,
-            FriendsClientInstance.SETTINGS_FRIEND_REQUEST_NOTIFICATIONS_ENABLED_KEY,
-            value.toString()
+            SettingKeys.FRIEND_REQUEST_NOTIFICATIONS
         )
-    }
 
     private fun friendRequestSnapshot(): ObjectArrayList<FriendRequest> =
         FriendsClientInstance.INSTANCE.friendRequests.snapshot()
