@@ -11,10 +11,6 @@ surfMinestomApi {
     withSurfRedis()
 }
 
-repositories {
-    mavenLocal()
-}
-
 minestomPluginFile {
     main = "dev.slne.surf.friends.minestom.FriendsMinestomPlugin"
     authors = listOf("twisti")
