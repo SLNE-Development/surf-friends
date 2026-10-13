@@ -1,25 +1,31 @@
 package dev.slne.surf.friends.minestom
 
-import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
-import dev.slne.minestom.lobby.api.plugin.annotation.MinestomPluginMeta
-import dev.slne.surf.friends.minestom.command.FriendCommandRegistrar
+import dev.slne.surf.api.minestom.plugin.SurfMinestomPlugin
+import dev.slne.surf.friends.core.client.FriendsClientInstance
+import dev.slne.surf.friends.minestom.command.friendCommand
+import dev.slne.surf.friends.minestom.command.subcommand.friend.friendListCommand
+import dev.slne.surf.friends.minestom.command.subcommand.request.friendRequestSendCommand
 import dev.slne.surf.friends.minestom.listener.ConnectionListener
 
-@AutoService(MinestomPlugin::class)
-@MinestomPluginMeta(
-    "surf-friends-minestom",
-    dependsOn = [
-        "surf-api-minestom",
-        "surf-rabbitmq-minestom",
-        "surf-redis-minestom",
-        "surf-core-minestom",
-        "surf-settings-minestom"
-    ]
-)
-class FriendsMinestomPlugin : MinestomPlugin(FriendsMinestomEntrypoint::class.java) {
-    override fun configurePlugin() {
-        bindCommandRegistrar<FriendCommandRegistrar>()
-        bindEventRegistrar<ConnectionListener>()
+object FriendsMinestomPlugin : SurfMinestomPlugin() {
+    override suspend fun onLoad() {
+        val instance = FriendsClientInstance.INSTANCE
+
+        instance.withEvents()
+        instance.onLoad()
+        instance.onEnable()
+    }
+
+    override suspend fun onEnable() {
+        friendCommand()
+
+        friendRequestSendCommand("fa").register()
+        friendListCommand("fl").register()
+
+        ConnectionListener.register(eventNode)
+    }
+
+    override suspend fun onDisable() {
+        FriendsClientInstance.INSTANCE.onDisable()
     }
 }

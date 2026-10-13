@@ -1,8 +1,8 @@
 package dev.slne.surf.friends.minestom
 
 import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.coroutine.MinestomDispatchers
-import dev.slne.minestom.lobby.api.coroutine.minestomScope
+import dev.slne.surf.api.minestom.coroutine.MinestomDispatchers
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import dev.slne.surf.friends.core.client.FriendsClientInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -12,7 +12,7 @@ import kotlin.coroutines.CoroutineContext
 
 @AutoService(FriendsClientInstance::class)
 class MinestomFriendsClientInstance : FriendsClientInstance() {
-    override val dataPath: Path get() = FriendsMinestomEntrypoint.dataPath
+    override val dataPath: Path get() = FriendsMinestomPlugin.dataDirectory
 
     override val mainDispatcher: CoroutineContext
         get() = MinestomDispatchers.Main

@@ -6,6 +6,10 @@ plugins {
     id("dev.slne.surf.microservice")
 }
 
+repositories {
+    mavenLocal()
+}
+
 surfCoreApi {
     withCoreCommon()
     withSurfRedis()
