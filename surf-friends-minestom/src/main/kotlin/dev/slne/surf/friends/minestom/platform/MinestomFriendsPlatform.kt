@@ -1,7 +1,7 @@
 package dev.slne.surf.friends.minestom.platform
 
 import com.google.auto.service.AutoService
-import dev.slne.minestom.lobby.api.extension.ConnectionManager
+import dev.slne.surf.api.minestom.extension.ConnectionManager
 import dev.slne.surf.friends.core.client.platform.FriendsPlatform
 import net.kyori.adventure.text.Component
 import java.util.*

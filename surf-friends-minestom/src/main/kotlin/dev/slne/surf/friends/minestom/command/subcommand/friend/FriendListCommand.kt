@@ -1,7 +1,7 @@
 package dev.slne.surf.friends.minestom.command.subcommand.friend
 
-import dev.slne.minestom.lobby.api.command.commandapi.CommandAPICommand
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutorSuspend
+import dev.slne.surf.api.minestom.command.CommandAPICommand
+import dev.slne.surf.api.minestom.command.dsl.playerExecutorSuspend
 import dev.slne.surf.friends.core.client.command.friendListComponent
 import dev.slne.surf.friends.core.client.permission.FriendPermissions
 

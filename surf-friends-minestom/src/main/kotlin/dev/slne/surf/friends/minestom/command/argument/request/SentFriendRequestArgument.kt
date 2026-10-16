@@ -1,10 +1,10 @@
 package dev.slne.surf.friends.minestom.command.argument.request
 
-import dev.slne.minestom.lobby.api.command.commandapi.CommandAPICommand
-import dev.slne.minestom.lobby.api.command.commandapi.argument.Argument
-import dev.slne.minestom.lobby.api.command.commandapi.argument.CustomArgument
-import dev.slne.minestom.lobby.api.command.commandapi.argument.StringArgument
-import dev.slne.minestom.lobby.api.command.commandapi.suggestion.ArgumentSuggestions
+import dev.slne.surf.api.minestom.command.CommandAPICommand
+import dev.slne.surf.api.minestom.command.argument.Argument
+import dev.slne.surf.api.minestom.command.argument.CustomArgument
+import dev.slne.surf.api.minestom.command.argument.StringArgument
+import dev.slne.surf.api.minestom.command.suggestion.ArgumentSuggestions
 import dev.slne.surf.friends.api.player.FriendsPlayer
 import dev.slne.surf.friends.core.client.command.findSentFriendRequestTarget
 import dev.slne.surf.friends.core.client.command.sentFriendRequestNames

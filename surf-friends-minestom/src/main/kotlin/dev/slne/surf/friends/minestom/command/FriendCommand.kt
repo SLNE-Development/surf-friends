@@ -1,6 +1,6 @@
 package dev.slne.surf.friends.minestom.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandAPICommand
+import dev.slne.surf.api.minestom.command.dsl.commandAPICommand
 import dev.slne.surf.friends.core.client.permission.FriendPermissions
 import dev.slne.surf.friends.minestom.command.subcommand.friend.friendListCommand
 import dev.slne.surf.friends.minestom.command.subcommand.friend.friendInfoCommand
