@@ -37,13 +37,8 @@ interface FriendsPlayer {
     suspend fun removeFriendship(target: FriendsPlayer): FriendshipRemoveResult
 
     val notificationsEnabled: Boolean
-    suspend fun setNotificationsEnabled(value: Boolean)
-
     val soundsEnabled: Boolean
-    suspend fun setSoundsEnabled(value: Boolean)
-
     val friendRequestNotificationsEnabled: Boolean
-    suspend fun setFriendRequestNotificationsEnabled(value: Boolean)
 
     companion object {
         operator fun get(uuid: UUID): FriendsPlayer = FriendsPlayerManager.findPlayer(uuid)
