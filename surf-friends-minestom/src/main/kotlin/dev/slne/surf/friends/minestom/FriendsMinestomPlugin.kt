@@ -13,10 +13,10 @@ object FriendsMinestomPlugin : SurfMinestomPlugin() {
 
         instance.withEvents()
         instance.onLoad()
-        instance.onEnable()
     }
 
     override suspend fun onEnable() {
+        FriendsClientInstance.INSTANCE.onEnable()
         friendCommand()
 
         friendRequestSendCommand("fa").register()
